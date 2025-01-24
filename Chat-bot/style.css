@@ -4,12 +4,6 @@
     box-sizing: border-box;
 } 
 
-body{
-    background-image: url(./assets/WhatsApp\ Image\ 2025-01-24\ at\ 11.13.13_836cdc60.jpg);
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-
 .bot {
     position: fixed;
     bottom: 20px;
