@@ -1,3 +1,95 @@
+const healthConditions = {
+  headache: {
+    response:
+      "It seems you have a headache. Make sure to stay hydrated, rest, and avoid stress. Do you need more suggestions?",
+    symptoms:
+      "Throbbing or constant pain in the head, sensitivity to light or sound, nausea.",
+    remedy:
+      "Here are a few remedies: Drink water, take rest in a quiet room, take over-the-counter pain relievers if necessary.",
+    diet: "Avoid caffeine and eat light, non-spicy food.",
+    lifestyle: "Maintain regular sleep patterns and limit screen time.",
+  },
+  fever: {
+    response:
+      "Fever can be uncomfortable. Rest, stay hydrated, and consider taking fever-reducing medication. Do you need more suggestions?",
+    symptoms: "Elevated body temperature, chills, sweating, muscle aches, fatigue.",
+    remedy:
+      "Here are a few remedies: Stay hydrated, take rest, take acetaminophen if needed.",
+    diet: "Eat easy-to-digest foods like soups and broths.",
+    lifestyle: "Get enough rest and avoid overexertion.",
+  },
+  fatigue: {
+    response:
+      "Fatigue could be due to stress, poor sleep, or nutrition. I recommend light exercise and a balanced diet. Do you need more suggestions?",
+    symptoms: "Persistent tiredness, lack of energy, difficulty concentrating.",
+    remedy:
+      "Here are a few remedies: Take short naps, stay hydrated, avoid excessive caffeine.",
+    diet: "Consume iron-rich foods like spinach and proteins like eggs.",
+    lifestyle: "Incorporate relaxation techniques like meditation into your routine.",
+  },
+};
+
+function fuzzyMatch(input, target) {
+  input = input.toLowerCase();
+  target = target.toLowerCase();
+  const inputWords = input.split(" ");
+  const targetWords = target.split(", ");
+  let matchScore = 0;
+
+  inputWords.forEach((word) => {
+    targetWords.forEach((targetWord) => {
+      if (targetWord.includes(word)) {
+        matchScore += 1;
+      }
+    });
+  });
+
+  return (matchScore / targetWords.length) * 100;
+}
+
+function matchCondition(userInput) {
+  for (let condition in healthConditions) {
+    if (userInput.toLowerCase().includes(condition)) {
+      return condition;
+    }
+  }
+
+  let bestMatch = null;
+  let highestScore = 0;
+
+  for (let condition in healthConditions) {
+    const details = healthConditions[condition];
+    if (details.symptoms) {
+      const score = fuzzyMatch(userInput, details.symptoms);
+      if (score > highestScore) {
+        bestMatch = condition;
+        highestScore = score;
+      }
+    }
+  }
+
+  return highestScore > 70 ? bestMatch : null;
+}
+
+function healthcareChatbot(userInput) {
+  const condition = matchCondition(userInput);
+
+  if (condition) {
+    if (userInput.toLowerCase().includes("remedy")) {
+      const remedyList = healthConditions[condition].remedy.split(", ");
+      return remedyList.map((line) => `- ${line}`).join("\n");
+    } else if (userInput.toLowerCase().includes("diet")) {
+      return healthConditions[condition].diet;
+    } else if (userInput.toLowerCase().includes("lifestyle")) {
+      return healthConditions[condition].lifestyle;
+    } else {
+      return `These symptoms are more similar to the symptoms of ${condition}. I would suggest consulting a doctor. Do you want to book an appointment?`;
+    }
+  } else {
+    return "I'm here to help, but I didn't quite understand your concern. Could you rephrase or provide more details?";
+  }
+}
+
 // Function to send bot replies
 function botReply(chatBody, message) {
   const botMessage = document.createElement("div");
@@ -15,30 +107,6 @@ function botReply(chatBody, message) {
   chatBody.appendChild(botMessage);
   chatBody.scrollTop = chatBody.scrollHeight;
 }
-
-const healthConditions = {
-  headache: {
-      response: "It seems you have a headache. Make sure to stay hydrated, rest, and avoid stress. Do you need more suggestions?",
-      symptoms: "Throbbing or constant pain in the head, sensitivity to light or sound, nausea.",
-      remedy: "Here are few Remedies: Drink water, Take rest in a quiet room, Take over-the-counter pain relievers if necessary.",
-      diet: "Avoid caffeine and eat light, non-spicy food.",
-      lifestyle: "Maintain regular sleep patterns and limit screen time."
-  },
-  fever: {
-      response: "Fever can be uncomfortable. Rest, stay hydrated, and consider taking fever-reducing medication. Do you need more suggestions?",
-      symptoms: "Elevated body temperature, chills, sweating, muscle aches, fatigue.",
-      remedy: "Here are few Remedies: Stay hydrated, Take rest, Take acetaminophen if needed.",
-      diet: "Eat easy-to-digest foods like soups and broths.",
-      lifestyle: "Get enough rest and avoid overexertion."
-  },
-  fatigue: {
-      response: "Fatigue could be due to stress, poor sleep, or nutrition. I recommend light exercise and a balanced diet. Do you need more suggestions?",
-      symptoms: "Persistent tiredness, lack of energy, difficulty concentrating.",
-      remedy: "Here are few Remedies: Take short naps, Stay hydrated, Avoid excessive caffeine.",
-      diet: "Consume iron-rich foods like spinach and proteins like eggs.",
-      lifestyle: "Incorporate relaxation techniques like meditation into your routine."
-  }
-};
 
 // Initialize chat options
 function initializeChat() {
@@ -89,6 +157,7 @@ function initializeChat() {
   // Append the options container to the chat body
   chatBody.appendChild(optionsContainer);
 }
+
 
 // Handle option selection
 function handleOptionSelection(option) {
@@ -143,6 +212,26 @@ function handleOptionSelection(option) {
     chatBody.appendChild(container);
   } else if (option === "Health Queries") {
     botReply(chatBody, "Please describe your health query:");
+    
+    const inputBox = document.getElementById("userInput");
+    inputBox.type = "text";
+    inputBox.placeholder = "Enter your query...";
+    inputBox.style.cssText = `
+      margin-top: 100px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      width: calc(100% - 20px);
+    `;
+    inputBox.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        const userQuery = e.target.value;
+        const response = healthcareChatbot(userQuery);
+        botReply(chatBody, response);
+        inputBox.value = "";
+      }
+    });
+    chatBody.appendChild(inputBox);
   }
 
   // Scroll to the bottom of the chat
@@ -506,73 +595,6 @@ if (allFieldsFilled) {
 
   // Scroll to the bottom of the chat
   chatBody.scrollTop = chatBody.scrollHeight;
-}
- 
-// Fuzzy matching function (simple implementation)
-function fuzzyMatch(input, target) {
-  input = input.toLowerCase();
-  target = target.toLowerCase();
-  const inputWords = input.split(" ");
-  const targetWords = target.split(", ");
-  let matchScore = 0;
-
-  inputWords.forEach(word => {
-      targetWords.forEach(targetWord => {
-          if (targetWord.includes(word)) {
-              matchScore += 1;
-          }
-      });
-  });
-
-  return (matchScore / targetWords.length) * 100;
-}
-
-// Match condition based on user input
-function matchCondition(userInput) {
-  for (let condition in healthConditions) {
-      if (userInput.toLowerCase().includes(condition)) {
-          return condition;
-      }
-  }
-
-  let bestMatch = null;
-  let highestScore = 0;
-
-  for (let condition in healthConditions) {
-      const details = healthConditions[condition];
-      if (details.symptoms) {
-          const score = fuzzyMatch(userInput, details.symptoms);
-          if (score > highestScore) {
-              bestMatch = condition;
-              highestScore = score;
-          }
-      }
-  }
-
-  return highestScore > 70 ? bestMatch : null;
-}
-
-// Healthcare chatbot logic
-function healthcareChatbot(userInput) {
-  const condition = matchCondition(userInput);
-
-  if (condition) {
-      if (userInput.toLowerCase().includes("remedy")) {
-          const remedyList = healthConditions[condition].remedy.split(", ");
-          return remedyList.map(line => `- ${line}`).join("\n");
-      } else if (userInput.toLowerCase().includes("diet")) {
-          return healthConditions[condition].diet;
-      } else if (userInput.toLowerCase().includes("lifestyle")) {
-          return healthConditions[condition].lifestyle;
-      } else {
-          return `These symptoms are more similar to the symptoms of ${condition}. I would suggest consulting a doctor. Do you want to book an appointment?`;
-      }
-  } else {
-      return "I'm here to help, but I didn't quite understand your concern. Could you rephrase or provide more details?";
-  }
-
-// Uncomment the following line to test the chatbot in Node.js
-// chatbotLoop();
 }
 
 // Initialize chat on page load
