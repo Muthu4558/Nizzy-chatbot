@@ -214,15 +214,25 @@ function handleOptionSelection(option) {
     botReply(chatBody, "Please describe your health query:");
     
     const inputBox = document.getElementById("userInput");
+    const sendButton = document.getElementById("sendButton");
+
+    // Style the input box
     inputBox.type = "text";
     inputBox.placeholder = "Enter your query...";
     inputBox.style.cssText = `
-      margin-top: 100px;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      width: calc(100% - 20px);
+      margin-top: 430px;
+      position: fixed;
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 25px;
+      font-size: 16px;
+      width: 300px;
+      outline: none;
+      transition: border-color 0.3s ease;
     `;
+
+    // Handle Enter key press
     inputBox.addEventListener("keypress", (e) => {
       if (e.key === "Enter") {
         const userQuery = e.target.value;
@@ -231,8 +241,20 @@ function handleOptionSelection(option) {
         inputBox.value = "";
       }
     });
+
+    // Handle button click
+    sendButton.addEventListener("click", () => {
+        const userQuery = inputBox.value.trim(); // Get the input value and trim spaces
+        if (userQuery) { // Only process if input is not empty
+            const response = healthcareChatbot(userQuery);
+            botReply(chatBody, response);
+            inputBox.value = "";
+        }
+    });
+
     chatBody.appendChild(inputBox);
-  }
+}
+
 
   // Scroll to the bottom of the chat
   chatBody.scrollTop = chatBody.scrollHeight;
