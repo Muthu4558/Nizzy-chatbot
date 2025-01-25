@@ -131,8 +131,8 @@ body{
 }
 
 .chat-footer input {
-
     width: 320px;
+    margin-left: 3px;
     padding: 15px 18px;
     border: 1px solid #ddd;
     border-radius: 25px;
