@@ -232,28 +232,50 @@ function handleOptionSelection(option) {
       transition: border-color 0.3s ease;
     `;
 
+    // Function to display the user input in chatBody
+    function addUserMessage(message) {
+        const userMessage = document.createElement("div");
+        userMessage.textContent = message;
+        userMessage.style.cssText = `
+            background: #229ea6;
+            color: white;
+            padding: 8px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            align-self: flex-end;
+            max-width: 70%;
+        `;
+        chatBody.appendChild(userMessage);
+        chatBody.scrollTop = chatBody.scrollHeight; // Scroll to the bottom
+    }
+
     // Handle Enter key press
     inputBox.addEventListener("keypress", (e) => {
       if (e.key === "Enter") {
-        const userQuery = e.target.value;
-        const response = healthcareChatbot(userQuery);
-        botReply(chatBody, response);
-        inputBox.value = "";
+        const userQuery = e.target.value.trim();
+        if (userQuery) {
+          addUserMessage(userQuery); // Display user message in chatBody
+          const response = healthcareChatbot(userQuery);
+          botReply(chatBody, response); // Display chatbot's response
+          inputBox.value = ""; // Clear input field
+        }
       }
     });
 
     // Handle button click
     sendButton.addEventListener("click", () => {
-        const userQuery = inputBox.value.trim(); // Get the input value and trim spaces
-        if (userQuery) { // Only process if input is not empty
+        const userQuery = inputBox.value.trim();
+        if (userQuery) {
+            addUserMessage(userQuery); // Display user message in chatBody
             const response = healthcareChatbot(userQuery);
-            botReply(chatBody, response);
-            inputBox.value = "";
+            botReply(chatBody, response); // Display chatbot's response
+            inputBox.value = ""; // Clear input field
         }
     });
 
     chatBody.appendChild(inputBox);
 }
+
 
 
   // Scroll to the bottom of the chat
@@ -276,8 +298,6 @@ function handleDateSelection(selectedDate) {
       align-self: flex-end;
   `;
   chatBody.appendChild(userMessage);
-
-
 }
 
 // Handle date selection
