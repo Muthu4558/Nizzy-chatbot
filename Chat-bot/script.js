@@ -284,7 +284,7 @@ function handleOptionSelection(option) {
 
 // Handle date selection
 function handleDateSelection(selectedDate) {
-  const chatBody = document.getElementById("chatBody");
+  const chatBody = document.getElementById("chatBody") ;
 
   // Display the selected date
   const userMessage = document.createElement("div");
