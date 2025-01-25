@@ -355,6 +355,12 @@ const healthConditions = {
   }
 };
 
+// Memory object to store user context
+let userContext = {
+  lastCondition: null // Stores the last condition mentioned by the user
+};
+
+// Fuzzy match function
 function fuzzyMatch(input, target) {
   input = input.toLowerCase();
   target = target.toLowerCase();
@@ -373,9 +379,11 @@ function fuzzyMatch(input, target) {
   return (matchScore / targetWords.length) * 100;
 }
 
+// Function to match health condition
 function matchCondition(userInput) {
   for (let condition in healthConditions) {
     if (userInput.toLowerCase().includes(condition)) {
+      userContext.lastCondition = condition; // Update context
       return condition;
     }
   }
@@ -394,11 +402,22 @@ function matchCondition(userInput) {
     }
   }
 
-  return highestScore > 70 ? bestMatch : null;
+  if (highestScore > 70) {
+    userContext.lastCondition = bestMatch; // Update context
+    return bestMatch;
+  } else {
+    return null;
+  }
 }
 
+// Function to handle chatbot logic
 function healthcareChatbot(userInput) {
-  const condition = matchCondition(userInput);
+  let condition = matchCondition(userInput);
+
+  if (!condition && userContext.lastCondition) {
+    // If no condition mentioned in the current message, use the previous condition
+    condition = userContext.lastCondition;
+  }
 
   if (condition) {
     if (userInput.toLowerCase().includes("remedy")) {
