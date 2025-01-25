@@ -355,6 +355,85 @@ const healthConditions = {
   }
 };
 
+function fuzzyMatch(input, target) {
+  input = input.toLowerCase();
+  target = target.toLowerCase();
+  const inputWords = input.split(" ");
+  const targetWords = target.split(", ");
+  let matchScore = 0;
+
+  inputWords.forEach((word) => {
+    targetWords.forEach((targetWord) => {
+      if (targetWord.includes(word)) {
+        matchScore += 1;
+      }
+    });
+  });
+
+  return (matchScore / targetWords.length) * 100;
+}
+
+function matchCondition(userInput) {
+  for (let condition in healthConditions) {
+    if (userInput.toLowerCase().includes(condition)) {
+      return condition;
+    }
+  }
+
+  let bestMatch = null;
+  let highestScore = 0;
+
+  for (let condition in healthConditions) {
+    const details = healthConditions[condition];
+    if (details.symptoms) {
+      const score = fuzzyMatch(userInput, details.symptoms);
+      if (score > highestScore) {
+        bestMatch = condition;
+        highestScore = score;
+      }
+    }
+  }
+
+  return highestScore > 70 ? bestMatch : null;
+}
+
+function healthcareChatbot(userInput) {
+  const condition = matchCondition(userInput);
+
+  if (condition) {
+    if (userInput.toLowerCase().includes("remedy")) {
+      const remedyList = healthConditions[condition].remedy.split(", ");
+      return remedyList.map((line) => `- ${line}`).join("\n");
+    } else if (userInput.toLowerCase().includes("diet")) {
+      return healthConditions[condition].diet;
+    } else if (userInput.toLowerCase().includes("lifestyle")) {
+      return healthConditions[condition].lifestyle;
+    } else {
+      return `These symptoms are more similar to the symptoms of ${condition}. I would suggest consulting a doctor. Do you want to book an appointment?`;
+    }
+  } else {
+    return "I'm here to help, but I didn't quite understand your concern. Could you rephrase or provide more details?";
+  }
+}
+
+// Function to send bot replies
+function botReply(chatBody, message) {
+  const botMessage = document.createElement("div");
+  botMessage.textContent = message;
+  botMessage.style.cssText = `
+      white-space: pre-wrap;
+      background: #f0f0f0;
+      color: black;
+      padding: 8px;
+      border-radius: 5px;
+      margin-bottom: 5px;
+      align-self: flex-start;
+      font-family: Arial, sans-serif;
+  `;
+  chatBody.appendChild(botMessage);
+  chatBody.scrollTop = chatBody.scrollHeight;
+}
+
 // Initialize chat options
 function initializeChat() {
   const chatBody = document.getElementById("chatBody");
@@ -404,6 +483,7 @@ function initializeChat() {
   // Append the options container to the chat body
   chatBody.appendChild(optionsContainer);
 }
+
 
 // Handle option selection
 function handleOptionSelection(option) {
@@ -458,7 +538,71 @@ function handleOptionSelection(option) {
     chatBody.appendChild(container);
   } else if (option === "Health Queries") {
     botReply(chatBody, "Please describe your health query:");
-  }
+    
+    const inputBox = document.getElementById("userInput");
+    const sendButton = document.getElementById("sendButton");
+
+    // Style the input box
+    inputBox.type = "text";
+    inputBox.placeholder = "Enter your query...";
+    inputBox.style.cssText = `
+      margin-top: 430px;
+      position: fixed;
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 25px;
+      font-size: 16px;
+      width: 300px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    `;
+
+    // Function to display the user input in chatBody
+    function addUserMessage(message) {
+        const userMessage = document.createElement("div");
+        userMessage.textContent = message;
+        userMessage.style.cssText = `
+            background: #229ea6;
+            color: white;
+            padding: 8px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            align-self: flex-end;
+            max-width: 70%;
+        `;
+        chatBody.appendChild(userMessage);
+        chatBody.scrollTop = chatBody.scrollHeight; // Scroll to the bottom
+    }
+
+    // Handle Enter key press
+    inputBox.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        const userQuery = e.target.value.trim();
+        if (userQuery) {
+          addUserMessage(userQuery); // Display user message in chatBody
+          const response = healthcareChatbot(userQuery);
+          botReply(chatBody, response); // Display chatbot's response
+          inputBox.value = ""; // Clear input field
+        }
+      }
+    });
+
+    // Handle button click
+    sendButton.addEventListener("click", () => {
+        const userQuery = inputBox.value.trim();
+        if (userQuery) {
+            addUserMessage(userQuery); // Display user message in chatBody
+            const response = healthcareChatbot(userQuery);
+            botReply(chatBody, response); // Display chatbot's response
+            inputBox.value = ""; // Clear input field
+        }
+    });
+
+    chatBody.appendChild(inputBox);
+}
+
+
 
   // Scroll to the bottom of the chat
   chatBody.scrollTop = chatBody.scrollHeight;
@@ -466,7 +610,7 @@ function handleOptionSelection(option) {
 
 // Handle date selection
 function handleDateSelection(selectedDate) {
-  const chatBody = document.getElementById("chatBody");
+  const chatBody = document.getElementById("chatBody") ;
 
   // Display the selected date
   const userMessage = document.createElement("div");
@@ -480,8 +624,6 @@ function handleDateSelection(selectedDate) {
       align-self: flex-end;
   `;
   chatBody.appendChild(userMessage);
-
-
 }
 
 // Handle date selection
@@ -821,73 +963,6 @@ if (allFieldsFilled) {
 
   // Scroll to the bottom of the chat
   chatBody.scrollTop = chatBody.scrollHeight;
-}
- 
-// Fuzzy matching function (simple implementation)
-function fuzzyMatch(input, target) {
-  input = input.toLowerCase();
-  target = target.toLowerCase();
-  const inputWords = input.split(" ");
-  const targetWords = target.split(", ");
-  let matchScore = 0;
-
-  inputWords.forEach(word => {
-      targetWords.forEach(targetWord => {
-          if (targetWord.includes(word)) {
-              matchScore += 1;
-          }
-      });
-  });
-
-  return (matchScore / targetWords.length) * 100;
-}
-
-// Match condition based on user input
-function matchCondition(userInput) {
-  for (let condition in healthConditions) {
-      if (userInput.toLowerCase().includes(condition)) {
-          return condition;
-      }
-  }
-
-  let bestMatch = null;
-  let highestScore = 0;
-
-  for (let condition in healthConditions) {
-      const details = healthConditions[condition];
-      if (details.symptoms) {
-          const score = fuzzyMatch(userInput, details.symptoms);
-          if (score > highestScore) {
-              bestMatch = condition;
-              highestScore = score;
-          }
-      }
-  }
-
-  return highestScore > 70 ? bestMatch : null;
-}
-
-// Healthcare chatbot logic
-function healthcareChatbot(userInput) {
-  const condition = matchCondition(userInput);
-
-  if (condition) {
-      if (userInput.toLowerCase().includes("remedy")) {
-          const remedyList = healthConditions[condition].remedy.split(", ");
-          return remedyList.map(line => `- ${line}`).join("\n");
-      } else if (userInput.toLowerCase().includes("diet")) {
-          return healthConditions[condition].diet;
-      } else if (userInput.toLowerCase().includes("lifestyle")) {
-          return healthConditions[condition].lifestyle;
-      } else {
-          return `These symptoms are more similar to the symptoms of ${condition}. I would suggest consulting a doctor. Do you want to book an appointment?`;
-      }
-  } else {
-      return "I'm here to help, but I didn't quite understand your concern. Could you rephrase or provide more details?";
-  }
-
-// Uncomment the following line to test the chatbot in Node.js
-// chatbotLoop();
 }
 
 // Initialize chat on page load
