@@ -40,6 +40,349 @@ const healthConditions = {
     "diet": "Consume iron-rich foods like spinach and proteins like eggs.",
     "lifestyle": "Incorporate relaxation techniques like meditation into your routine."
   },
+    "body pain": {
+        "disease name": "body pain",
+        "response": "Body pain can be caused by various factors like overexertion, stress, or underlying medical conditions. Rest and hydration can help. Would you like suggestions?",
+        "symptoms": "Generalized aches, stiffness, fatigue, difficulty in movement.",
+        "remedy": "Here are a few remedies:, Take rest and avoid strenuous activities, Apply a warm compress or take a warm bath, Use over-the-counter pain relievers if needed.",
+        "diet": "Consume foods rich in antioxidants and magnesium, like nuts, spinach, and fruits.",
+        "lifestyle": "Incorporate regular physical activity like stretching and yoga, and ensure adequate sleep."
+    },
+    "throat pain": {
+        "disease name": "throat pain",
+        "response": "Throat pain is often caused by infections or irritation. Home remedies and hydration can ease symptoms. Need guidance?",
+        "symptoms": "Sore throat, difficulty swallowing, redness, and irritation in the throat.",
+        "remedy": "Here are a few remedies:, Gargle with warm salt water, Stay hydrated with warm fluids like tea, Use throat lozenges or sprays for relief.",
+        "diet": "Consume soothing foods like honey, ginger, and warm soups. Avoid spicy and acidic foods.",
+        "lifestyle": "Avoid smoking, use a humidifier to keep the air moist, and rest your voice."
+    },
+    "neck pain": {
+        "disease name": "neck pain",
+        "response": "Neck pain can result from poor posture, strain, or injury. Gentle exercises and rest may help. Would you like tips?",
+        "symptoms": "Stiffness in the neck, difficulty turning the head, soreness, and sometimes headaches.",
+        "remedy": "Here are a few remedies:, Apply a cold or warm compress to the neck, Perform gentle neck stretches, Use a supportive pillow for sleeping.",
+        "diet": "Include anti-inflammatory foods like turmeric, berries, and leafy greens.",
+        "lifestyle": "Maintain good posture, take regular breaks from screens, and avoid heavy lifting."
+    },
+    "joint pain": {
+        "disease name": "joint pain",
+        "response": "Joint pain can be due to arthritis, injury, or strain. Rest and proper care can alleviate discomfort. Need advice?",
+        "symptoms": "Swelling, stiffness, reduced range of motion, redness around the joint.",
+        "remedy": "Here are a few remedies:, Apply ice packs to reduce swelling, Perform low-impact exercises like swimming, Use over-the-counter pain relief creams or medications.",
+        "diet": "Consume omega-3 rich foods like fish and flaxseeds, and avoid processed foods.",
+        "lifestyle": "Stay active but avoid overexertion, and maintain a healthy weight to reduce stress on joints."
+    },
+    "back pain": {
+        "disease name": "back pain",
+        "response": "Back pain can result from poor posture, heavy lifting, or underlying conditions. Exercises and rest may help. Need guidance?",
+        "symptoms": "Aching or sharp pain in the back, difficulty standing or bending, stiffness.",
+        "remedy": "Here are a few remedies:, Use heat or cold therapy, Practice stretching and strengthening exercises, Avoid prolonged sitting or heavy lifting.",
+        "diet": "Consume calcium and vitamin D-rich foods like dairy and fortified cereals.",
+        "lifestyle": "Maintain a proper posture, invest in ergonomic furniture, and stay active."
+    },
+    "leg pain": {
+        "disease name": "leg pain",
+        "response": "Leg pain can be due to muscle strain, cramps, or circulation issues. Rest and hydration can help. Need advice?",
+        "symptoms": "Cramping, swelling, soreness, or tingling in the legs.",
+        "remedy": "Here are a few remedies:, Elevate your legs while resting, Massage the affected area, Stay hydrated and stretch regularly.",
+        "diet": "Include potassium-rich foods like bananas and sweet potatoes, and stay hydrated.",
+        "lifestyle": "Avoid sitting or standing for long periods, and wear comfortable footwear."
+    },
+    "arm pain": {
+        "disease name": "arm pain",
+        "response": "Arm pain can arise from overuse, strain, or injury. Rest and proper care may alleviate discomfort. Need guidance?",
+        "symptoms": "Soreness, swelling, difficulty in movement, or tingling in the arm.",
+        "remedy": "Here are a few remedies:, Rest the arm and avoid overexertion, Apply ice to reduce swelling, Use a compression bandage if needed.",
+        "diet": "Consume anti-inflammatory foods like nuts, seeds, and berries.",
+        "lifestyle": "Practice proper ergonomics, and avoid repetitive motions."
+    },
+    "vomiting": {
+      "disease name": "vomiting",
+      "response": "Vomiting can be caused by various factors such as infections or motion sickness. Rest and hydration are important. Need remedies?",
+      "symptoms": "Nausea, stomach discomfort, frequent expulsion of stomach contents, dizziness.",
+      "remedy": "Here are a few remedies:, Sip clear fluids like water or ginger tea, Avoid solid foods until vomiting subsides, Rest in a comfortable position.",
+      "diet": "Consume bland foods like crackers or toast once symptoms improve, Avoid greasy or spicy foods.",
+      "lifestyle": "Avoid rapid movements and practice relaxation techniques to reduce nausea triggers."
+  },
+  "wheezing": {
+      "disease name": "wheezing",
+      "response": "Wheezing is a whistling sound while breathing, often due to respiratory issues. Breathing exercises and medication can help. Need advice?",
+      "symptoms": "Whistling sound during breathing, shortness of breath, tightness in the chest.",
+      "remedy": "Here are a few remedies:, Use prescribed inhalers or bronchodilators, Perform steam inhalation to ease breathing, Avoid allergens or irritants.",
+      "diet": "Consume anti-inflammatory foods like turmeric and ginger, and avoid dairy if it worsens mucus.",
+      "lifestyle": "Maintain good air quality in your living environment and avoid smoking."
+  },
+  "allergy": {
+      "disease name": "allergy",
+      "response": "Allergies can cause symptoms like sneezing or skin irritation. Identifying triggers and avoiding them is crucial. Need help?",
+      "symptoms": "Sneezing, itching, rashes, watery eyes, swelling.",
+      "remedy": "Here are a few remedies:, Take antihistamines as prescribed, Use a cold compress for skin irritation, Avoid exposure to known allergens.",
+      "diet": "Include vitamin C-rich foods to boost immunity and avoid allergenic foods if identified.",
+      "lifestyle": "Use air purifiers and keep your living area dust-free."
+  },
+  "runny nose": {
+      "disease name": "runny nose",
+      "response": "A runny nose is often a sign of a cold or allergy. Rest and hydration can help. Would you like remedies?",
+      "symptoms": "Excess mucus production, nasal congestion, frequent sneezing.",
+      "remedy": "Here are a few remedies:, Use saline nasal spray, Perform steam inhalation, Stay hydrated with warm fluids.",
+      "diet": "Consume warm soups and herbal teas, and avoid cold drinks.",
+      "lifestyle": "Keep your surroundings warm and avoid sudden exposure to cold air."
+  },
+  "cough": {
+      "disease name": "cough",
+      "response": "Coughing can be due to throat irritation or respiratory issues. Remedies can help ease the discomfort. Need tips?",
+      "symptoms": "Persistent coughing, throat irritation, chest tightness.",
+      "remedy": "Here are a few remedies:, Sip warm honey and lemon water, Use a humidifier to moisten the air, Avoid irritants like smoke.",
+      "diet": "Consume warm broths and herbal teas, and avoid cold or carbonated beverages.",
+      "lifestyle": "Practice breathing exercises and avoid straining your voice."
+  },
+  "sore throat": {
+      "disease name": "sore throat",
+      "response": "A sore throat can result from infections or irritation. Gargling and hydration can help. Need remedies?",
+      "symptoms": "Throat pain, difficulty swallowing, redness in the throat.",
+      "remedy": "Here are a few remedies:, Gargle with warm salt water, Drink warm fluids like tea with honey, Use throat lozenges for relief.",
+      "diet": "Consume soft, warm foods and avoid spicy or acidic items.",
+      "lifestyle": "Avoid speaking loudly and rest your voice."
+  },
+  "sinusitis": {
+    "disease name": "sinusitis",
+    "response": "Sinusitis leads to nasal congestion and facial pain. Proper hydration and medications can help. Would you like tips?",
+    "symptoms": "Facial pain or pressure, nasal congestion, headache, post-nasal drip.",
+    "remedy": "Here are a few remedies:, Use saline nasal spray, Inhale steam or take hot showers, Take over-the-counter decongestants.",
+    "diet": "Drink warm fluids like soup or herbal tea, and avoid cold or sugary drinks.",
+    "lifestyle": "Use a humidifier and avoid allergens or pollutants that can worsen symptoms."
+},
+"rhinitis": {
+    "disease name": "rhinitis",
+    "response": "Rhinitis causes a runny nose and sneezing. Managing allergens and medications can relieve symptoms. Need advice?",
+    "symptoms": "Runny nose, sneezing, nasal congestion, itchy eyes.",
+    "remedy": "Here are a few remedies:, Avoid allergens, Use antihistamines or nasal sprays, Rinse your nose with saline water.",
+    "diet": "Include anti-inflammatory foods like turmeric and ginger, and avoid dairy if it worsens congestion.",
+    "lifestyle": "Keep your surroundings clean and use air filters to reduce allergens."
+},
+"diarrhea": {
+    "disease name": "diarrhea",
+    "response": "Diarrhea can cause dehydration. Stay hydrated and eat bland foods. Would you like more suggestions?",
+    "symptoms": "Frequent loose or watery stools, abdominal cramps, dehydration, nausea.",
+    "remedy": "Here are a few remedies:, Drink oral rehydration solutions, Eat bananas, rice, applesauce, and toast (BRAT diet), Avoid caffeine and fatty foods.",
+    "diet": "Consume electrolyte-rich drinks like coconut water, and avoid spicy and greasy foods.",
+    "lifestyle": "Practice proper hygiene and avoid contaminated food or water."
+},
+"bronchitis": {
+    "disease name": "bronchitis",
+    "response": "Bronchitis causes cough and chest discomfort. Rest and hydration can help recovery. Need tips?",
+    "symptoms": "Persistent cough, chest discomfort, fatigue, shortness of breath.",
+    "remedy": "Here are a few remedies:, Drink warm fluids to soothe the throat, Use a humidifier, Avoid smoking and irritants.",
+    "diet": "Consume foods rich in antioxidants like fruits and vegetables, and stay hydrated with warm liquids.",
+    "lifestyle": "Avoid exposure to pollutants and get plenty of rest."
+},
+"asthma": {
+    "disease name": "asthma",
+    "response": "Asthma causes breathing difficulties due to airway inflammation. Medications and lifestyle adjustments can help. Need guidance?",
+    "symptoms": "Shortness of breath, wheezing, chest tightness, coughing (especially at night).",
+    "remedy": "Here are a few remedies:, Use prescribed inhalers, Avoid allergens or irritants, Practice breathing exercises.",
+    "diet": "Include anti-inflammatory foods like omega-3-rich fish and avoid processed foods.",
+    "lifestyle": "Stay active but avoid overexertion and maintain a dust-free environment."
+},
+"food poisoning": {
+    "disease name": "food poisoning",
+    "response": "Food poisoning leads to nausea, vomiting, and diarrhea. Rest and hydration are crucial. Need advice?",
+    "symptoms": "Nausea, vomiting, diarrhea, stomach cramps, fever.",
+    "remedy": "Here are a few remedies:, Drink oral rehydration solutions, Eat bland foods like rice and bananas, Rest and avoid heavy meals.",
+    "diet": "Consume clear fluids and electrolyte drinks, and avoid greasy, spicy, or sugary foods.",
+    "lifestyle": "Ensure proper food hygiene and avoid expired or contaminated foods."
+},
+"migraine": {
+    "disease name": "migraine",
+    "response": "Migraines cause intense headaches and sensitivity to light. Rest and hydration can help. Need tips?",
+    "symptoms": "Throbbing headache, nausea, sensitivity to light and sound, visual disturbances.",
+    "remedy": "Here are a few remedies:, Rest in a dark, quiet room, Apply a cold compress to the head, Take prescribed pain relievers.",
+    "diet": "Avoid trigger foods like caffeine, chocolate, and processed meats.",
+    "lifestyle": "Maintain regular sleep patterns and manage stress effectively."
+},
+"common cold": {
+    "disease name": "common cold",
+    "response": "The common cold causes sneezing, a runny nose, and fatigue. Rest and hydration can help. Need advice?",
+    "symptoms": "Runny nose, sneezing, sore throat, mild fever, cough.",
+    "remedy": "Here are a few remedies:, Drink warm fluids, Gargle with saltwater, Use steam inhalation to clear nasal passages.",
+    "diet": "Consume vitamin C-rich foods like oranges and stay hydrated with warm soups.",
+    "lifestyle": "Avoid crowded places and wash your hands frequently to prevent spread."
+},
+"influenza (flu)": {
+    "disease name": "influenza (flu)",
+    "response": "Influenza causes fever, body aches, and fatigue. Rest and hydration are key. Would you like more tips?",
+    "symptoms": "High fever, muscle aches, fatigue, sore throat, chills.",
+    "remedy": "Here are a few remedies:, Rest and drink plenty of fluids, Take prescribed antiviral medications, Use warm compresses for aches.",
+    "diet": "Consume warm broths and herbal teas, and avoid cold or sugary foods.",
+    "lifestyle": "Get vaccinated annually and maintain good hygiene practices."
+},
+"ear infection": {
+    "disease name": "ear infection",
+    "response": "Ear infections cause pain and hearing difficulty. Warm compresses and medications can help. Need suggestions?",
+    "symptoms": "Ear pain, hearing difficulty, fever, fluid drainage from the ear.",
+    "remedy": "Here are a few remedies:, Use warm compresses for pain relief, Take prescribed antibiotics if recommended, Avoid inserting objects into the ear.",
+    "diet": "Stay hydrated and consume immune-boosting foods like citrus fruits and garlic.",
+    "lifestyle": "Maintain ear hygiene and avoid exposure to loud noises."
+},    "chest pain": {
+  "disease name": "chest pain",
+  "response": "Chest pain can have various causes, including heart or lung issues. Immediate evaluation is crucial if symptoms are severe. Would you like general advice?",
+  "symptoms": "Pressure, tightness, or discomfort in the chest, pain radiating to the arms or jaw, shortness of breath.",
+  "remedy": "Here are a few remedies:, Rest and avoid strenuous activity, Take prescribed medications if advised, Apply relaxation techniques for anxiety-induced pain.",
+  "diet": "Avoid heavy, fatty meals and consume heart-healthy foods like fruits, vegetables, and whole grains.",
+  "lifestyle": "Monitor symptoms, avoid smoking, and seek medical attention if pain persists or worsens."
+},
+"acidity (acid reflux)": {
+  "disease name": "acidity (acid reflux)",
+  "response": "Acidity causes heartburn and discomfort. Lifestyle changes and antacids can provide relief. Need tips?",
+  "symptoms": "Burning sensation in the chest, sour taste in the mouth, bloating, nausea.",
+  "remedy": "Here are a few remedies:, Avoid lying down immediately after meals, Elevate your head while sleeping, Take antacids or prescribed medications.",
+  "diet": "Eat small, frequent meals, avoid spicy and fatty foods, and include fiber-rich items.",
+  "lifestyle": "Avoid smoking, reduce alcohol intake, and maintain a healthy weight."
+},
+"constipation": {
+  "disease name": "constipation",
+  "response": "Constipation can cause discomfort and bloating. Increasing fiber and hydration can help. Would you like remedies?",
+  "symptoms": "Infrequent bowel movements, difficulty passing stool, bloating, abdominal pain.",
+  "remedy": "Here are a few remedies:, Drink plenty of water, Include high-fiber foods in your diet, Take gentle laxatives if needed.",
+  "diet": "Consume fruits, vegetables, and whole grains, and avoid processed foods.",
+  "lifestyle": "Stay active with regular exercise and establish a consistent bathroom routine."
+},
+"indigestion": {
+  "disease name": "indigestion",
+  "response": "Indigestion causes discomfort after eating. Dietary changes and medications can help. Need advice?",
+  "symptoms": "Abdominal discomfort, bloating, nausea, belching.",
+  "remedy": "Here are a few remedies:, Eat smaller meals, Avoid eating too quickly, Take over-the-counter antacids.",
+  "diet": "Avoid caffeine, spicy foods, and carbonated drinks. Include probiotics like yogurt.",
+  "lifestyle": "Avoid lying down immediately after eating and manage stress effectively."
+},
+"cold sore": {
+  "disease name": "cold sore",
+  "response": "Cold sores are caused by a viral infection. Antiviral creams can reduce symptoms. Need tips?",
+  "symptoms": "Small, fluid-filled blisters around the lips, itching or tingling sensation, mild fever.",
+  "remedy": "Here are a few remedies:, Apply antiviral creams, Avoid picking at the sores, Use cold compresses for pain relief.",
+  "diet": "Consume immune-boosting foods like citrus fruits and zinc-rich foods.",
+  "lifestyle": "Avoid sharing utensils or personal items and manage stress to prevent outbreaks."
+},
+"urinary tract infection (UTI)": {
+  "disease name": "urinary tract infection (UTI)",
+  "response": "UTIs cause pain during urination. Hydration and proper hygiene are key. Need advice?",
+  "symptoms": "Burning sensation during urination, frequent urge to urinate, cloudy or foul-smelling urine.",
+  "remedy": "Here are a few remedies:, Drink plenty of water, Avoid caffeine and alcohol, Take prescribed antibiotics if needed.",
+  "diet": "Include cranberry juice and foods rich in vitamin C.",
+  "lifestyle": "Practice good hygiene and avoid holding urine for long periods."
+},
+"eczema": {
+  "disease name": "eczema",
+  "response": "Eczema causes itchy, inflamed skin. Moisturizing and avoiding triggers can help. Need suggestions?",
+  "symptoms": "Red, itchy, and dry skin, oozing or crusting patches, thickened skin over time.",
+  "remedy": "Here are a few remedies:, Use fragrance-free moisturizers, Take lukewarm baths, Avoid harsh soaps and irritants.",
+  "diet": "Include anti-inflammatory foods like fish and leafy greens, and avoid dairy or processed foods if they worsen symptoms.",
+  "lifestyle": "Wear loose, cotton clothing and manage stress to reduce flare-ups."
+},
+"anemia": {
+  "disease name": "anemia",
+  "response": "Anemia causes fatigue and weakness due to low hemoglobin. Dietary changes and supplements can help. Need tips?",
+  "symptoms": "Fatigue, pale skin, shortness of breath, dizziness.",
+  "remedy": "Here are a few remedies:, Take iron supplements as prescribed, Avoid tea or coffee with meals, Treat underlying conditions if present.",
+  "diet": "Include iron-rich foods like spinach, red meat, and legumes, along with vitamin C for better absorption.",
+  "lifestyle": "Ensure regular check-ups and maintain a balanced diet."
+},
+"insomnia": {
+  "disease name": "insomnia",
+  "response": "Insomnia leads to difficulty sleeping. Relaxation techniques and proper sleep hygiene can help. Need advice?",
+  "symptoms": "Difficulty falling asleep, waking up frequently, daytime fatigue, irritability.",
+  "remedy": "Here are a few remedies:, Follow a regular sleep schedule, Avoid caffeine or heavy meals before bedtime, Practice relaxation techniques like meditation.",
+  "diet": "Consume foods rich in tryptophan like turkey and bananas, and avoid sugary or caffeinated drinks.",
+  "lifestyle": "Create a comfortable sleep environment and limit screen time before bed."
+},
+"panic attack": {
+  "disease name": "panic attack",
+  "response": "Panic attacks cause sudden fear and physical symptoms. Breathing exercises can help. Need more tips?",
+  "symptoms": "Rapid heartbeat, chest pain, dizziness, sweating, shortness of breath.",
+  "remedy": "Here are a few remedies:, Practice deep breathing, Focus on grounding techniques, Seek professional counseling if needed.",
+  "diet": "Avoid caffeine and processed foods that may worsen anxiety.",
+  "lifestyle": "Maintain a healthy work-life balance and practice mindfulness."
+},
+"allergic rhinitis": {
+  "disease name": "allergic rhinitis",
+  "response": "Allergic rhinitis causes sneezing and nasal congestion due to allergens. Avoiding triggers can help. Need suggestions?",
+  "symptoms": "Sneezing, runny nose, itchy eyes, nasal congestion.",
+  "remedy": "Here are a few remedies:, Use antihistamines as prescribed, Perform nasal irrigation, Minimize exposure to allergens.",
+  "diet": "Consume foods rich in quercetin like onions and apples to reduce allergy symptoms.",
+  "lifestyle": "Keep your environment dust-free and use air purifiers if needed."
+},
+"tonsillitis": {
+  "disease name": "tonsillitis",
+  "response": "Tonsillitis causes a sore throat and difficulty swallowing. Rest and hydration are key. Would you like tips?",
+  "symptoms": "Sore throat, swollen tonsils, fever, difficulty swallowing, white patches on tonsils.",
+  "remedy": "Here are a few remedies:, Gargle with warm salt water, Take over-the-counter pain relievers, Stay hydrated.",
+  "diet": "Consume warm soups, herbal teas, and soft foods to ease swallowing.",
+  "lifestyle": "Avoid smoking and practice good oral hygiene."
+},
+"otitis media (middle ear infection)": {
+  "disease name": "otitis media (middle ear infection)",
+  "response": "Middle ear infections cause ear pain and hearing difficulty. Warm compresses and medications can help. Need guidance?",
+  "symptoms": "Ear pain, difficulty hearing, fluid drainage from the ear, fever.",
+  "remedy": "Here are a few remedies:, Apply a warm compress to the affected ear, Take prescribed antibiotics if needed, Avoid inserting objects into the ear.",
+  "diet": "Focus on immune-boosting foods like citrus fruits and leafy greens.",
+  "lifestyle": "Avoid exposure to secondhand smoke and keep ears dry."
+},
+"earwax blockage": {
+  "disease name": "earwax blockage",
+  "response": "Earwax blockage can cause hearing issues and discomfort. Proper cleaning methods are essential. Need advice?",
+  "symptoms": "Hearing loss, earache, ringing in the ear (tinnitus), dizziness.",
+  "remedy": "Here are a few remedies:, Use ear drops to soften wax, Avoid cotton swabs deep in the ear, Consult a doctor for professional cleaning.",
+  "diet": "Maintain a balanced diet to support ear health.",
+  "lifestyle": "Avoid inserting objects into the ear and clean the outer ear regularly."
+},
+"laryngitis": {
+  "disease name": "laryngitis",
+  "response": "Laryngitis causes voice loss and throat irritation. Resting your voice can help. Need remedies?",
+  "symptoms": "Hoarseness, sore throat, dry throat, difficulty speaking.",
+  "remedy": "Here are a few remedies:, Rest your voice, Drink warm fluids, Use a humidifier to moisten the air.",
+  "diet": "Consume warm teas with honey and avoid caffeine or alcohol.",
+  "lifestyle": "Avoid shouting and exposure to irritants like smoke."
+},
+"nasal polyps": {
+  "disease name": "nasal polyps",
+  "response": "Nasal polyps cause nasal obstruction and breathing issues. Medications can reduce symptoms. Need tips?",
+  "symptoms": "Nasal congestion, loss of smell, runny nose, postnasal drip.",
+  "remedy": "Here are a few remedies:, Use corticosteroid nasal sprays, Perform steam inhalation, Take prescribed medications.",
+  "diet": "Consume anti-inflammatory foods like turmeric and ginger.",
+  "lifestyle": "Avoid allergens and maintain good air quality in your home."
+},
+"pharyngitis": {
+  "disease name": "pharyngitis",
+  "response": "Pharyngitis causes throat pain and irritation. Warm liquids and rest can help. Need advice?",
+  "symptoms": "Sore throat, difficulty swallowing, swollen lymph nodes, fever.",
+  "remedy": "Here are a few remedies:, Gargle with warm salt water, Drink warm herbal teas, Avoid irritants like smoke.",
+  "diet": "Consume warm broths, soft foods, and stay hydrated.",
+  "lifestyle": "Avoid straining your throat and rest well to recover."
+},
+"vertigo": {
+  "disease name": "vertigo",
+  "response": "Vertigo causes dizziness and balance issues. Exercises and medications can help. Need tips?",
+  "symptoms": "Dizziness, spinning sensation, nausea, difficulty balancing.",
+  "remedy": "Here are a few remedies:, Perform vestibular rehabilitation exercises, Avoid sudden head movements, Stay hydrated.",
+  "diet": "Reduce salt intake to manage fluid balance in the inner ear.",
+  "lifestyle": "Avoid caffeine, alcohol, and smoking, and get enough rest."
+},
+"snoring": {
+  "disease name": "snoring",
+  "response": "Snoring can disrupt sleep quality. Lifestyle changes and proper sleep posture can help. Need suggestions?",
+  "symptoms": "Loud breathing during sleep, interrupted breathing, fatigue during the day.",
+  "remedy": "Here are a few remedies:, Sleep on your side, Use nasal strips to improve airflow, Avoid alcohol before bedtime.",
+  "diet": "Maintain a healthy weight by consuming a balanced diet.",
+  "lifestyle": "Establish a regular sleep routine and avoid smoking."
+},
+"sleep apnea": {
+  "disease name": "sleep apnea",
+  "response": "Sleep apnea causes interrupted breathing during sleep. Medical devices and lifestyle changes can help. Need guidance?",
+  "symptoms": "Loud snoring, gasping for air during sleep, daytime fatigue, difficulty concentrating.",
+  "remedy": "Here are a few remedies:, Use a CPAP machine as prescribed, Avoid sleeping on your back, Lose excess weight if needed.",
+  "diet": "Focus on a balanced diet with low-fat and nutrient-rich foods.",
+  "lifestyle": "Avoid alcohol and sedatives before bed and maintain a consistent sleep schedule."
+},  
   "gastroesophageal reflux disease (GERD)": {
     "disease name": "gastroesophageal reflux disease (GERD)",
     "response": "GERD causes heartburn and acid reflux. Lifestyle changes and dietary adjustments can reduce symptoms. Need suggestions?",
@@ -476,7 +819,7 @@ function healthcareChatbot(userInput) {
     } else if (userInput.toLowerCase().includes(condition)) {
       return healthConditions[condition].response;
     } else {
-      return `These symptoms are more similar to the symptoms of ${condition}. I would suggest consulting a doctor. Do you want to book an appointment?`;
+      return `These symptoms are more similar to the symptoms of ${condition}. I would suggest consulting a doctor. Do you want to book an Teleconsultation ?`;
     }
   } else {
     return "I'm here to help, but I didn't quite understand your concern. Could you rephrase or provide more details?";
