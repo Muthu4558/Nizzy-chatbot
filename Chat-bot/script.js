@@ -1,25 +1,25 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
   const chatMessageContainer = document.getElementById("chatMessageContainer");
   let showFirstMessage = true;
-  
+
   function showMessage(text) {
-      chatMessageContainer.innerHTML = ""; // Clear previous message
-      let messageDiv = document.createElement("div");
-      messageDiv.classList.add("chat-message");
-      messageDiv.textContent = text;
-      chatMessageContainer.appendChild(messageDiv);
+    chatMessageContainer.innerHTML = "";
+    let messageDiv = document.createElement("div");
+    messageDiv.classList.add("chat-message");
+    messageDiv.textContent = text;
+    chatMessageContainer.appendChild(messageDiv);
   }
-  
+
   function loopMessages() {
-      if (showFirstMessage) {
-          showMessage("Hi!! I am Nizzy");
-      } else {
-          showMessage("How can I help you?");
-      }
-      showFirstMessage = !showFirstMessage;
-      setTimeout(loopMessages, 4000);
+    if (showFirstMessage) {
+      showMessage("Hi!! I am Nizzy");
+    } else {
+      showMessage("How can I help you?");
+    }
+    showFirstMessage = !showFirstMessage;
+    setTimeout(loopMessages, 4000);
   }
-  
+
   loopMessages();
 });
 
@@ -34,15 +34,17 @@ function botReply(chatBody, message) {
       border-radius: 5px;
       margin-bottom: 5px;
       align-self: flex-start;
-      font-family: Arial, sans-serif;
+      
   `;
   chatBody.appendChild(botMessage);
   chatBody.scrollTop = chatBody.scrollHeight;
 }
 
+// Health Query Data's
 const healthConditions = {
   "headache": {
     "disease name": "headache",
+    "synonyms": ["headache", "head pain", "head ache", "headpain"],
     "response": "It seems you have a headache. Make sure to stay hydrated, rest, and avoid stress. Do you need more suggestions?",
     "symptoms": "Throbbing or constant pain in the head, sensitivity to light or sound, nausea.",
     "remedy": "Here are few Remedies:, Drink water, Take rest in a quiet room, Take over-the-counter pain relievers if necessary.",
@@ -898,7 +900,6 @@ function healthcareChatbot(userInput) {
 function displayConditionInfo(condition) {
   const chatBody = document.getElementById("chatBody");
 
-  // Create a container for disease info + buttons + response
   let conditionContainer = document.createElement("div");
   conditionContainer.style.cssText = `
         background: #f9f9f9;
@@ -909,21 +910,17 @@ function displayConditionInfo(condition) {
         font-family: Arial, sans-serif;
     `;
 
-  // Add disease information
   let conditionMessage = document.createElement("p");
   conditionMessage.innerHTML = `<strong>${condition.toUpperCase()}</strong><br>${healthConditions[condition].response}`;
   conditionMessage.style.cssText = `font-size: 14px; color: #333; margin-bottom: 10px;`;
 
-  // Create button container
   let buttonContainer = document.createElement("div");
   buttonContainer.style.cssText = "display: flex; gap: 10px; margin-top: 10px;";
 
-  // Create response container (where remedies, diet, or lifestyle info will be shown)
   let responseContainer = document.createElement("div");
   responseContainer.classList.add("responseContainer");
   responseContainer.style.cssText = "margin-top: 10px; font-size: 14px; color: #444;";
 
-  // Create buttons dynamically
   ["remedy", "diet", "lifestyle"].forEach((type) => {
     let button = document.createElement("button");
     button.textContent = type.charAt(0).toUpperCase() + type.slice(1);
@@ -944,12 +941,10 @@ function displayConditionInfo(condition) {
     buttonContainer.appendChild(button);
   });
 
-  // Append elements to the container
   conditionContainer.appendChild(conditionMessage);
   conditionContainer.appendChild(buttonContainer);
   conditionContainer.appendChild(responseContainer);
 
-  // Append the container to the chat
   chatBody.appendChild(conditionContainer);
   chatBody.scrollTop = chatBody.scrollHeight;
 }
@@ -976,17 +971,17 @@ function botReply(chatBody, message) {
 function initializeChat() {
   const chatBody = document.getElementById("chatBody");
 
-  // Create a container for the options
   const optionsContainer = document.createElement("div");
   optionsContainer.style.cssText = `
       background: #ffffff;
       padding: 10px;
       border: 1px solid #ccc;
       border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      font-family: Arial, sans-serif;
       margin: 10px 0;
   `;
 
-  // Add the heading
   const heading = document.createElement("p");
   heading.textContent = "How May I help you ?";
   heading.style.cssText = `
@@ -995,20 +990,19 @@ function initializeChat() {
   `;
   optionsContainer.appendChild(heading);
 
-  // Define options
   const options = ["Book Teleconsultation", "Health Queries"];
 
-  // Add buttons for each option
   options.forEach((option) => {
     const button = document.createElement("button");
     button.textContent = option;
     button.style.cssText = `
-        background: #f0f0f0;
-        color: black;
+        background: #229ea6;
+        color: white;
         padding: 8px 12px;
         border: none;
         margin: 5px 0;
         border-radius: 5px;
+        font-family: Arial, sans-serif;
         cursor: pointer;
         display: block;
         width: 100%;
@@ -1018,7 +1012,6 @@ function initializeChat() {
     optionsContainer.appendChild(button);
   });
 
-  // Append the options container to the chat body
   chatBody.appendChild(optionsContainer);
 }
 
@@ -1026,7 +1019,6 @@ function initializeChat() {
 function handleOptionSelection(option) {
   const chatBody = document.getElementById("chatBody");
 
-  // Display user's choice as a message bubble
   const userMessage = document.createElement("div");
   userMessage.textContent = option;
   userMessage.style.cssText = `
@@ -1036,10 +1028,10 @@ function handleOptionSelection(option) {
       border-radius: 5px;
       margin-bottom: 5px;
       align-self: flex-end;
+      font-family: Arial, sans-serif;
   `;
   chatBody.appendChild(userMessage);
 
-  // Handle "Book Teleconsultation" option
   if (option === "Book Teleconsultation") {
     const container = document.createElement("div");
     container.style.cssText = `
@@ -1047,6 +1039,8 @@ function handleOptionSelection(option) {
         padding: 10px;
         border: 1px solid #ccc;
         border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        font-family: Arial, sans-serif;
         margin: 10px 0;
     `;
 
@@ -1055,6 +1049,7 @@ function handleOptionSelection(option) {
     message.style.cssText = `
         font-weight: bold;
         margin-bottom: 10px;
+        font-family: Arial, sans-serif;
     `;
     container.appendChild(message);
 
@@ -1074,12 +1069,26 @@ function handleOptionSelection(option) {
 
     chatBody.appendChild(container);
   } else if (option === "Health Queries") {
-    botReply(chatBody, "Please describe your health query");
+    const healthQueryDiv = document.createElement("div");
+    healthQueryDiv.textContent = "Please describe your health query";
+    healthQueryDiv.style.cssText = `
+      background: white;
+      color: black;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      font-family: Arial, sans-serif;
+      width: 70%;
+      margin-top: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    `;
+    chatBody.appendChild(healthQueryDiv);
 
     const inputBox = document.getElementById("userInput");
     const sendButton = document.getElementById("sendButton");
 
-    // Style the input box
     inputBox.type = "text";
     inputBox.placeholder = "Enter your query...";
     inputBox.style.cssText = `
@@ -1100,19 +1109,19 @@ function handleOptionSelection(option) {
       const userMessage = document.createElement("div");
       userMessage.textContent = message;
       userMessage.style.cssText = `
-            background: #229ea6;
-            color: white;
-            padding: 8px;
-            border-radius: 5px;
-            margin-bottom: 5px;
-            align-self: flex-end;
-            max-width: 70%;
-        `;
+        background: #229ea6;
+        color: white;
+        padding: 8px;
+        border-radius: 5px;
+        margin-bottom: 5px;
+        align-self: flex-end;
+        max-width: 70%;
+        font-family: Arial, sans-serif;
+      `;
       chatBody.appendChild(userMessage);
       chatBody.scrollTop = chatBody.scrollHeight;
     }
 
-    // Handle Enter key press
     inputBox.addEventListener("keypress", (e) => {
       if (e.key === "Enter") {
         const userQuery = e.target.value.trim();
@@ -1125,7 +1134,6 @@ function handleOptionSelection(option) {
       }
     });
 
-    // Handle button click
     sendButton.addEventListener("click", () => {
       const userQuery = inputBox.value.trim();
       if (userQuery) {
@@ -1145,7 +1153,6 @@ function handleOptionSelection(option) {
 function handleDateSelection(selectedDate) {
   const chatBody = document.getElementById("chatBody");
 
-  // Display the selected date
   const userMessage = document.createElement("div");
   userMessage.textContent = `Selected Date: ${selectedDate}`;
   userMessage.style.cssText = `
@@ -1155,6 +1162,7 @@ function handleDateSelection(selectedDate) {
       border-radius: 5px;
       margin-bottom: 5px;
       align-self: flex-end;
+      font-family: Arial, sans-serif;
   `;
   chatBody.appendChild(userMessage);
 }
@@ -1163,7 +1171,6 @@ function handleDateSelection(selectedDate) {
 function handleDateSelection(selectedDate) {
   const chatBody = document.getElementById("chatBody");
 
-  // Display user's selected date as a message bubble
   const userMessage = document.createElement("div");
   userMessage.textContent = `Selected Date: ${selectedDate}`;
   userMessage.style.cssText = `
@@ -1172,21 +1179,22 @@ function handleDateSelection(selectedDate) {
       padding: 8px;
       border-radius: 5px;
       margin-bottom: 5px;
+      font-family: Arial, sans-serif;
       align-self: flex-end;
   `;
   chatBody.appendChild(userMessage);
 
-  // Create a container for the message and time slots
   const container = document.createElement("div");
   container.style.cssText = `
       background: #ffffff;
       padding: 10px;
       border: 1px solid #ccc;
       border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       margin: 10px 0;
+      font-family: Arial, sans-serif;
   `;
 
-  // Add a message for the selected date
   const message = document.createElement("p");
   message.textContent = `Choose Your Time Slot for ${selectedDate}:`;
   message.style.cssText = `
@@ -1195,14 +1203,13 @@ function handleDateSelection(selectedDate) {
   `;
   container.appendChild(message);
 
-  // Available time slots
   const timeSlots = ["10:00 AM", "11:00 AM", "12:00 PM", "2:00 PM", "3:00 PM"];
   timeSlots.forEach((slot) => {
     const button = document.createElement("button");
     button.textContent = slot;
     button.style.cssText = `
-        background: #f0f0f0;
-        color: black;
+        background: #229ea6;
+        color: white;
         padding: 8px 12px;
         border: none;
         margin: 5px 0;
@@ -1220,7 +1227,6 @@ function handleDateSelection(selectedDate) {
 
   chatBody.appendChild(container);
 
-  // Scroll to the bottom of the chat
   chatBody.scrollTop = chatBody.scrollHeight;
 }
 
@@ -1228,7 +1234,6 @@ function handleDateSelection(selectedDate) {
 function handleTimeSlotSelection(selectedDate, selectedTime) {
   const chatBody = document.getElementById("chatBody");
 
-  // Display selected time slot as a message bubble
   const userMessage = document.createElement("div");
   userMessage.textContent = `Selected Time Slot: ${selectedTime}`;
   userMessage.style.cssText = `
@@ -1241,7 +1246,6 @@ function handleTimeSlotSelection(selectedDate, selectedTime) {
   `;
   chatBody.appendChild(userMessage);
 
-  // Scroll to the bottom of the chat
   chatBody.scrollTop = chatBody.scrollHeight;
 }
 
@@ -1249,7 +1253,6 @@ function handleTimeSlotSelection(selectedDate, selectedTime) {
 function handleTimeSlotSelection(date, slot) {
   const chatBody = document.getElementById("chatBody");
 
-  // Create a container for the message, input fields, and button
   const detailsContainer = document.createElement("div");
   detailsContainer.style.cssText = `
     margin: 10px 0;
@@ -1260,17 +1263,16 @@ function handleTimeSlotSelection(date, slot) {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   `;
 
-  // Add the bot message inside the container
   const botMessage = document.createElement("p");
   botMessage.textContent = "Please share the following details:";
   botMessage.style.cssText = `
     font-weight: bold;
     margin-bottom: 15px;
+    font-family: Arial, sans-serif;
     font-size: 16px;
   `;
   detailsContainer.appendChild(botMessage);
 
-  // Store input elements
   const userInputs = {};
 
   const nameInput = document.createElement("input");
@@ -1452,10 +1454,31 @@ function handleTimeSlotSelection(date, slot) {
       `;
 
       verifyButton.addEventListener("click", () => {
-        botReply(
-          chatBody,
-          `✅ Booking Confirmation!\n\n📅 Date: ${date}\n⏰ Time: ${slot}\n👤 Patient Name: ${collectedData["Full Name"]}\n📞 Mobile Number: ${collectedData["Mobile Number"]}`
-        );
+        const confirmationMessage = document.createElement("div");
+
+        confirmationMessage.innerHTML = `✅ Booking Confirmation!<br><br>
+          📅 Date: ${date}<br>
+          ⏰ Time: ${slot}<br>
+          👤 Patient Name: ${collectedData["Full Name"]}<br>
+          📞 Mobile Number: ${collectedData["Mobile Number"]}`;
+
+        confirmationMessage.style.cssText = `
+          background: #fff;
+          font-family: Arial, Helvetica, sans-serif;
+          color: #333;
+          padding: 10px;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          font-size: 16px;
+          width: 100%;
+          margin-top: 10px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        `;
+
+        chatBody.appendChild(confirmationMessage);
+        chatBody.scrollTop = chatBody.scrollHeight;
+
         otpContainer.remove();
       });
 

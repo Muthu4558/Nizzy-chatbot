@@ -59,6 +59,7 @@
     display: flex;
     justify-content: center;
 }
+
 .chat-message {
     background: linear-gradient(135deg, #77d2d8, #23c9d2);
     color: #fff;
@@ -74,7 +75,6 @@
     display: inline-block;
     text-align: center;
     opacity: 0;
-    /* Combine two animations: one for pop effect and one for color hue rotation */
     animation: popInOut 4s ease-in-out infinite, hueRotate 4s linear infinite;
 }
 
@@ -83,22 +83,27 @@
         opacity: 0;
         transform: scale(0.8) rotate(0deg);
     }
+
     20% {
         opacity: 1;
         transform: scale(1.1) rotate(3deg);
     }
+
     40% {
         opacity: 1;
         transform: scale(1) rotate(0deg);
     }
+
     60% {
         opacity: 1;
         transform: scale(1.1) rotate(-3deg);
     }
+
     80% {
         opacity: 1;
         transform: scale(1) rotate(0deg);
     }
+
     100% {
         opacity: 0;
         transform: scale(0.8) rotate(0deg);
@@ -109,6 +114,7 @@
     from {
         filter: hue-rotate(0deg);
     }
+
     to {
         filter: hue-rotate(360deg);
     }
@@ -116,10 +122,25 @@
 
 
 @keyframes fadeInOut {
-    0% { opacity: 0; transform: translateY(10px); }
-    20% { opacity: 1; transform: translateY(0); }
-    80% { opacity: 1; transform: translateY(0); }
-    100% { opacity: 0; transform: translateY(-10px); }
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    20% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    80% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
 }
 
 @keyframes slideIn {
@@ -174,13 +195,90 @@
 }
 
 .chat-body {
+    position: relative;
     padding: 15px;
     height: calc(100% - 120px);
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 12px;
-    background: #f7f7f7;
+    background: linear-gradient(45deg, #006d77, #83c5be, #006d77, #83c5be);
+    background-size: 400% 400%;
+    animation: gradientAnimation 12s ease infinite;
+    overflow-x: hidden;
+    scrollbar-width: none;
+}
+
+@keyframes gradientAnimation {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.chat-body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 1;
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.3) 20%, transparent 20%);
+    background-size: 20px 20px;
+    opacity: 0.3;
+    animation: particles 15s linear infinite;
+}
+
+@keyframes particles {
+    0% {
+        background-position: 0 0;
+    }
+
+    100% {
+        background-position: 100px 100px;
+    }
+}
+
+.chat-body::after {
+    content: "";
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    width: 200%;
+    height: 100px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 40%;
+    transform: translateX(-50%);
+    animation: wave 8s ease-in-out infinite;
+    z-index: 1;
+}
+
+@keyframes wave {
+    0% {
+        transform: translateX(-50%) translateY(0) scaleX(1);
+    }
+
+    50% {
+        transform: translateX(-50%) translateY(-10px) scaleX(1.2);
+    }
+
+    100% {
+        transform: translateX(-50%) translateY(0) scaleX(1);
+    }
+}
+
+.chat-body>* {
+    position: relative;
+    z-index: 1;
 }
 
 .chat-footer {
@@ -266,7 +364,7 @@
 }
 
 @media screen and (max-width: 480px) {
-    .chat-container{
+    .chat-container {
         right: 8px;
     }
 
@@ -276,4 +374,4 @@
         padding: 12px 15px;
         right: 13px;
     }
-  }
+}
