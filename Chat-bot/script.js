@@ -34,7 +34,7 @@ function botReply(chatBody, message) {
       border-radius: 5px;
       margin-bottom: 5px;
       align-self: flex-start;
-      
+      font-family: Arial, sans-serif;
   `;
   chatBody.appendChild(botMessage);
   chatBody.scrollTop = chatBody.scrollHeight;
@@ -983,8 +983,6 @@ function initializeChat() {
       padding: 10px;
       border: 1px solid #ccc;
       border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      font-family: Arial, sans-serif;
       margin: 10px 0;
   `;
 
@@ -1005,13 +1003,12 @@ function initializeChat() {
     const button = document.createElement("button");
     button.textContent = option;
     button.style.cssText = `
-        background: #229ea6;
-        color: white;
+        background: #f0f0f0;
+        color: black;
         padding: 8px 12px;
         border: none;
         margin: 5px 0;
         border-radius: 5px;
-        font-family: Arial, sans-serif;
         cursor: pointer;
         display: block;
         width: 100%;
@@ -1039,7 +1036,6 @@ function handleOptionSelection(option) {
       border-radius: 5px;
       margin-bottom: 5px;
       align-self: flex-end;
-      font-family: Arial, sans-serif;
   `;
   chatBody.appendChild(userMessage);
 
@@ -1051,8 +1047,6 @@ function handleOptionSelection(option) {
         padding: 10px;
         border: 1px solid #ccc;
         border-radius: 8px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        font-family: Arial, sans-serif;
         margin: 10px 0;
     `;
 
@@ -1061,7 +1055,6 @@ function handleOptionSelection(option) {
     message.style.cssText = `
         font-weight: bold;
         margin-bottom: 10px;
-        font-family: Arial, sans-serif;
     `;
     container.appendChild(message);
 
@@ -1081,27 +1074,11 @@ function handleOptionSelection(option) {
 
     chatBody.appendChild(container);
   } else if (option === "Health Queries") {
-    // Create a styled message element for the health query prompt
-    const healthQueryDiv = document.createElement("div");
-    healthQueryDiv.textContent = "Please describe your health query";
-    healthQueryDiv.style.cssText = `
-      background: white;
-      color: black;
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 14px;
-      font-family: Arial, sans-serif;
-      width: 70%;
-      margin-top: 10px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    `;
-    chatBody.appendChild(healthQueryDiv);
-    
+    botReply(chatBody, "Please describe your health query");
+
     const inputBox = document.getElementById("userInput");
     const sendButton = document.getElementById("sendButton");
-  
+
     // Style the input box
     inputBox.type = "text";
     inputBox.placeholder = "Enter your query...";
@@ -1117,25 +1094,24 @@ function handleOptionSelection(option) {
       outline: none;
       transition: border-color 0.3s ease;
     `;
-  
+
     // Function to display the user input in chatBody
     function addUserMessage(message) {
       const userMessage = document.createElement("div");
       userMessage.textContent = message;
       userMessage.style.cssText = `
-        background: #229ea6;
-        color: white;
-        padding: 8px;
-        border-radius: 5px;
-        margin-bottom: 5px;
-        align-self: flex-end;
-        max-width: 70%;
-        font-family: Arial, sans-serif;
-      `;
+            background: #229ea6;
+            color: white;
+            padding: 8px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            align-self: flex-end;
+            max-width: 70%;
+        `;
       chatBody.appendChild(userMessage);
       chatBody.scrollTop = chatBody.scrollHeight;
     }
-  
+
     // Handle Enter key press
     inputBox.addEventListener("keypress", (e) => {
       if (e.key === "Enter") {
@@ -1148,7 +1124,7 @@ function handleOptionSelection(option) {
         }
       }
     });
-  
+
     // Handle button click
     sendButton.addEventListener("click", () => {
       const userQuery = inputBox.value.trim();
@@ -1159,7 +1135,7 @@ function handleOptionSelection(option) {
         inputBox.value = "";
       }
     });
-  
+
     chatBody.appendChild(inputBox);
   }
   chatBody.scrollTop = chatBody.scrollHeight;
@@ -1179,7 +1155,6 @@ function handleDateSelection(selectedDate) {
       border-radius: 5px;
       margin-bottom: 5px;
       align-self: flex-end;
-      font-family: Arial, sans-serif;
   `;
   chatBody.appendChild(userMessage);
 }
@@ -1197,7 +1172,6 @@ function handleDateSelection(selectedDate) {
       padding: 8px;
       border-radius: 5px;
       margin-bottom: 5px;
-      font-family: Arial, sans-serif;
       align-self: flex-end;
   `;
   chatBody.appendChild(userMessage);
@@ -1209,9 +1183,7 @@ function handleDateSelection(selectedDate) {
       padding: 10px;
       border: 1px solid #ccc;
       border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       margin: 10px 0;
-      font-family: Arial, sans-serif;
   `;
 
   // Add a message for the selected date
@@ -1229,8 +1201,8 @@ function handleDateSelection(selectedDate) {
     const button = document.createElement("button");
     button.textContent = slot;
     button.style.cssText = `
-        background: #229ea6;
-        color: white;
+        background: #f0f0f0;
+        color: black;
         padding: 8px 12px;
         border: none;
         margin: 5px 0;
@@ -1294,7 +1266,6 @@ function handleTimeSlotSelection(date, slot) {
   botMessage.style.cssText = `
     font-weight: bold;
     margin-bottom: 15px;
-    font-family: Arial, sans-serif;
     font-size: 16px;
   `;
   detailsContainer.appendChild(botMessage);
@@ -1481,36 +1452,10 @@ function handleTimeSlotSelection(date, slot) {
       `;
 
       verifyButton.addEventListener("click", () => {
-        // Create a container for the booking confirmation message
-        const confirmationMessage = document.createElement("div");
-        
-        // Use innerHTML and <br> to display each detail on its own line in the same container
-        confirmationMessage.innerHTML = `✅ Booking Confirmation!<br><br>
-          📅 Date: ${date}<br>
-          ⏰ Time: ${slot}<br>
-          👤 Patient Name: ${collectedData["Full Name"]}<br>
-          📞 Mobile Number: ${collectedData["Mobile Number"]}`;
-      
-        // Apply your desired style
-        confirmationMessage.style.cssText = `
-          background: #fff;
-          font-family: Arial, Helvetica, sans-serif;
-          color: #333;
-          padding: 10px;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
-          font-size: 16px;
-          width: 100%;
-          margin-top: 10px;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        `;
-      
-        // Append the confirmation message to the chat body and scroll to the bottom
-        chatBody.appendChild(confirmationMessage);
-        chatBody.scrollTop = chatBody.scrollHeight;
-      
-        // Remove the OTP container
+        botReply(
+          chatBody,
+          `✅ Booking Confirmation!\n\n📅 Date: ${date}\n⏰ Time: ${slot}\n👤 Patient Name: ${collectedData["Full Name"]}\n📞 Mobile Number: ${collectedData["Mobile Number"]}`
+        );
         otpContainer.remove();
       });
 
