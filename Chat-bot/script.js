@@ -817,10 +817,12 @@ function healthcareChatbot(userInput) {
       return healthConditions[condition].diet;
     } else if (userInput.toLowerCase().includes("lifestyle")) {
       return healthConditions[condition].lifestyle;
-    } else {
+    } else if (userInput.toLowerCase().includes(condition)) {
       // Display condition response with buttons inside the same container
       displayConditionInfo(condition);
       return;
+    } else {
+      return `These symptoms are more similar to the symptoms of ${condition}. I would suggest consulting a doctor. Do you want to book an appointment?`;
     }
   } else {
     return "I'm here to help, but I didn't quite understand your concern. Could you rephrase or provide more details?";
