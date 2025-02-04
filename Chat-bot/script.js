@@ -44,52 +44,51 @@ function botReply(chatBody, message) {
 const healthConditions = {
   "headache": {
     "disease name": "headache",
-    "synonyms": ["headache", "head pain", "head ache", "headpain"],
-    "response": "It seems you have a headache. Make sure to stay hydrated, rest, and avoid stress. Do you need more suggestions?",
+    "response": "It looks like you're experiencing a headache. Drink plenty of water and rest in a quiet place. Applying a cold or warm compress on the forehead may help.",
     "symptoms": "Throbbing or constant pain in the head, sensitivity to light or sound, nausea.",
-    "remedy": "Here are few Remedies:, Drink water, Take rest in a quiet room, Take over-the-counter pain relievers if necessary.",
-    "diet": "Avoid caffeine and eat light, non-spicy food.",
-    "lifestyle": "Maintain regular sleep patterns and limit screen time."
+    "remedy": "Here are a few remedies:, Apply a cold or warm compress on your forehead, Drink plenty of water and stay hydrated, Have a cup of ginger or tulsi (holy basil) tea.",
+    "diet": "Consume fresh fruits, coconut water, and light home-cooked meals. Avoid processed and oily foods.",
+    "lifestyle": "Follow a regular sleep schedule, practice yoga or meditation, and limit mobile or screen time before bed."
   },
   "fever": {
     "disease name": "fever",
-    "response": "Fever can be uncomfortable. Rest, stay hydrated, and consider taking fever-reducing medication. Do you need more suggestions?",
+    "response": "Fever can be uncomfortable, but it’s often a sign that your body is fighting an infection. Drink warm fluids like herbal kadha or tulsi tea and take ample rest.",
     "symptoms": "Elevated body temperature, chills, sweating, muscle aches, fatigue.",
-    "remedy": "Here are few Remedies:, Stay hydrated, Take rest, Take acetaminophen if needed.",
-    "diet": "Eat easy-to-digest foods like soups and broths.",
-    "lifestyle": "Get enough rest and avoid overexertion."
+    "remedy": "Here are a few remedies:, Drink warm tulsi (holy basil) or ginger tea, Sponge your body with lukewarm water to reduce temperature, Take medications if required, under a doctor's guidance.",
+    "diet": "Drink plenty of fluids like coconut water, homemade soups, and buttermilk. Eat light meals like khichdi and moong dal soup.",
+    "lifestyle": "Avoid exposure to extreme temperatures, wear light cotton clothes, and take enough rest."
   },
   "fatigue": {
     "disease name": "fatigue",
-    "response": "Fatigue could be due to stress, poor sleep, or nutrition. I recommend light exercise and a balanced diet. Do you need more suggestions?",
+    "response": "Feeling fatigued? This could be due to stress, lack of sleep, or improper diet. A warm cup of masala chai or lemon water might help. Do you need some easy energy-boosting tips?",
     "symptoms": "Persistent tiredness, lack of energy, difficulty concentrating.",
-    "remedy": "Here are few Remedies:, Take short naps, Stay hydrated, Avoid excessive caffeine.",
-    "diet": "Consume iron-rich foods like spinach and proteins like eggs.",
-    "lifestyle": "Incorporate relaxation techniques like meditation into your routine."
+    "remedy": "Here are a few remedies:, Take small power naps, Have a spoonful of honey with warm water in the morning, Drink nimbu paani (lemon water) or coconut water.",
+    "diet": "Eat energy-boosting foods like almonds, dates, bananas, and homemade curd. Avoid excessive caffeine and processed foods.",
+    "lifestyle": "Practice morning walks, pranayama, and get adequate sleep daily."
   },
   "body pain": {
     "disease name": "body pain",
-    "response": "Body pain can be caused by various factors like overexertion, stress, or underlying medical conditions. Rest and hydration can help. Would you like suggestions?",
+    "response": "Body pain can be due to overexertion, viral infections, or dehydration. A warm turmeric milk or massage with sesame oil can help. Would you like some natural remedies?",
     "symptoms": "Generalized aches, stiffness, fatigue, difficulty in movement.",
-    "remedy": "Here are a few remedies:, Take rest and avoid strenuous activities, Apply a warm compress or take a warm bath, Use over-the-counter pain relievers if needed.",
-    "diet": "Consume foods rich in antioxidants and magnesium, like nuts, spinach, and fruits.",
-    "lifestyle": "Incorporate regular physical activity like stretching and yoga, and ensure adequate sleep."
+    "remedy": "Here are a few remedies:, Drink warm haldi doodh (turmeric milk), Apply warm mustard or coconut oil with a pinch of rock salt, Take proper rest and stay hydrated.",
+    "diet": "Have nutrient-rich foods like leafy greens, seasonal fruits, and nuts. Drink herbal tea or jeera (cumin) water.",
+    "lifestyle": "Practice light yoga, avoid heavy lifting, and ensure good hydration."
   },
   "throat pain": {
     "disease name": "throat pain",
-    "response": "Throat pain is often caused by infections or irritation. Home remedies and hydration can ease symptoms. Need guidance?",
+    "response": "Throat pain can be due to infections or irritation. Try drinking warm turmeric milk or gargling with salt water. Would you like home remedies?",
     "symptoms": "Sore throat, difficulty swallowing, redness, and irritation in the throat.",
-    "remedy": "Here are a few remedies:, Gargle with warm salt water, Stay hydrated with warm fluids like tea, Use throat lozenges or sprays for relief.",
-    "diet": "Consume soothing foods like honey, ginger, and warm soups. Avoid spicy and acidic foods.",
-    "lifestyle": "Avoid smoking, use a humidifier to keep the air moist, and rest your voice."
+    "remedy": "Here are a few remedies:, Gargle with warm salt water twice a day, Drink warm tulsi (holy basil) tea or ginger-honey tea, Avoid cold drinks and ice creams.",
+    "diet": "Have warm soups, honey with ginger, and herbal teas like kadha made with tulsi, cloves, and cinnamon.",
+    "lifestyle": "Avoid smoking, drink warm water, and use a humidifier if the air is dry."
   },
   "neck pain": {
     "disease name": "neck pain",
-    "response": "Neck pain can result from poor posture, strain, or injury. Gentle exercises and rest may help. Would you like tips?",
+    "response": "Neck pain can be caused by bad posture or strain. A warm mustard oil massage and gentle exercises might help. Would you like natural relief tips?",
     "symptoms": "Stiffness in the neck, difficulty turning the head, soreness, and sometimes headaches.",
-    "remedy": "Here are a few remedies:, Apply a cold or warm compress to the neck, Perform gentle neck stretches, Use a supportive pillow for sleeping.",
-    "diet": "Include anti-inflammatory foods like turmeric, berries, and leafy greens.",
-    "lifestyle": "Maintain good posture, take regular breaks from screens, and avoid heavy lifting."
+    "remedy": "Here are a few remedies:, Apply warm mustard oil or sesame oil, Perform light neck stretches, Use a properly supportive pillow while sleeping.",
+    "diet": "Eat anti-inflammatory foods like turmeric, ajwain (carom seeds), and flaxseeds.",
+    "lifestyle": "Avoid prolonged screen use, maintain good posture, and take breaks when working long hours."
   },
   "joint pain": {
     "disease name": "joint pain",
@@ -125,59 +124,59 @@ const healthConditions = {
   },
   "vomiting": {
     "disease name": "vomiting",
-    "response": "Vomiting can be caused by various factors such as infections or motion sickness. Rest and hydration are important. Need remedies?",
+    "response": "Vomiting can be caused by infections, motion sickness, or indigestion. Sip on nimbu paani or ginger tea for relief. Need more tips?",
     "symptoms": "Nausea, stomach discomfort, frequent expulsion of stomach contents, dizziness.",
-    "remedy": "Here are a few remedies:, Sip clear fluids like water or ginger tea, Avoid solid foods until vomiting subsides, Rest in a comfortable position.",
-    "diet": "Consume bland foods like crackers or toast once symptoms improve, Avoid greasy or spicy foods.",
-    "lifestyle": "Avoid rapid movements and practice relaxation techniques to reduce nausea triggers."
+    "remedy": "Here are a few remedies:, Sip on ginger tea or coconut water, Suck on a piece of clove or cardamom, Avoid spicy and oily foods.",
+    "diet": "Have light, bland foods like khichdi, moong dal, or curd rice. Drink coconut water for hydration.",
+    "lifestyle": "Avoid lying down immediately after eating, and take slow, deep breaths to calm nausea."
   },
   "wheezing": {
     "disease name": "wheezing",
-    "response": "Wheezing is a whistling sound while breathing, often due to respiratory issues. Breathing exercises and medication can help. Need advice?",
+    "response": "Wheezing can be due to allergies or asthma. Steam inhalation and turmeric milk may help ease breathing. Need home remedies?",
     "symptoms": "Whistling sound during breathing, shortness of breath, tightness in the chest.",
-    "remedy": "Here are a few remedies:, Use prescribed inhalers or bronchodilators, Perform steam inhalation to ease breathing, Avoid allergens or irritants.",
-    "diet": "Consume anti-inflammatory foods like turmeric and ginger, and avoid dairy if it worsens mucus.",
-    "lifestyle": "Maintain good air quality in your living environment and avoid smoking."
+    "remedy": "Here are a few remedies:, Take steam inhalation with eucalyptus oil, Drink warm haldi doodh (turmeric milk), Avoid exposure to dust and pollution.",
+    "diet": "Drink warm herbal teas with honey and include garlic, ginger, and black pepper in your meals.",
+    "lifestyle": "Keep your surroundings dust-free, avoid cold drinks, and practice deep breathing exercises."
   },
   "allergy": {
     "disease name": "allergy",
-    "response": "Allergies can cause symptoms like sneezing or skin irritation. Identifying triggers and avoiding them is crucial. Need help?",
+    "response": "Allergies can cause sneezing, itching, or skin irritation. Identifying triggers and avoiding them is key. Would you like remedies?",
     "symptoms": "Sneezing, itching, rashes, watery eyes, swelling.",
-    "remedy": "Here are a few remedies:, Take antihistamines as prescribed, Use a cold compress for skin irritation, Avoid exposure to known allergens.",
-    "diet": "Include vitamin C-rich foods to boost immunity and avoid allergenic foods if identified.",
-    "lifestyle": "Use air purifiers and keep your living area dust-free."
+    "remedy": "Here are a few remedies:, Drink warm tulsi (holy basil) tea, Take steam inhalation if the allergy affects breathing, Apply aloe vera or coconut oil for skin allergies.",
+    "diet": "Have vitamin C-rich foods like amla (Indian gooseberry), oranges, and lemon. Avoid dairy if it worsens symptoms.",
+    "lifestyle": "Keep your home dust-free, use herbal anti-allergy drinks like giloy juice, and practice yoga to strengthen immunity."
   },
   "runny nose": {
     "disease name": "runny nose",
-    "response": "A runny nose is often a sign of a cold or allergy. Rest and hydration can help. Would you like remedies?",
+    "response": "A runny nose is often due to a cold or allergy. Drinking warm herbal teas and inhaling steam can help. Would you like remedies?",
     "symptoms": "Excess mucus production, nasal congestion, frequent sneezing.",
-    "remedy": "Here are a few remedies:, Use saline nasal spray, Perform steam inhalation, Stay hydrated with warm fluids.",
-    "diet": "Consume warm soups and herbal teas, and avoid cold drinks.",
-    "lifestyle": "Keep your surroundings warm and avoid sudden exposure to cold air."
+    "remedy": "Here are a few remedies: Use saline nasal spray, Perform steam inhalation with tulsi or eucalyptus oil, Stay hydrated with warm fluids.",
+    "diet": "Drink warm haldi doodh (turmeric milk), consume ginger tea, and avoid cold beverages.",
+    "lifestyle": "Use steam inhalation with tulsi or eucalyptus oil and keep yourself warm."
   },
   "cough": {
     "disease name": "cough",
-    "response": "Coughing can be due to throat irritation or respiratory issues. Remedies can help ease the discomfort. Need tips?",
+    "response": "Coughing can be due to throat irritation or infections. Home remedies like honey with ginger may help. Need more suggestions?",
     "symptoms": "Persistent coughing, throat irritation, chest tightness.",
-    "remedy": "Here are a few remedies:, Sip warm honey and lemon water, Use a humidifier to moisten the air, Avoid irritants like smoke.",
-    "diet": "Consume warm broths and herbal teas, and avoid cold or carbonated beverages.",
-    "lifestyle": "Practice breathing exercises and avoid straining your voice."
+    "remedy": "Here are a few remedies: Sip warm honey and lemon water, Use a humidifier to moisten the air, Avoid irritants like smoke.",
+    "diet": "Drink adrak (ginger) tea, tulsi tea, or warm water with honey and lemon. Avoid fried and cold foods.",
+    "lifestyle": "Avoid exposure to pollution, use a humidifier, and practice pranayama (breathing exercises)."
   },
   "sore throat": {
     "disease name": "sore throat",
-    "response": "A sore throat can result from infections or irritation. Gargling and hydration can help. Need remedies?",
+    "response": "A sore throat can be relieved with warm herbal drinks and gargling with salt water. Need some tips?",
     "symptoms": "Throat pain, difficulty swallowing, redness in the throat.",
-    "remedy": "Here are a few remedies:, Gargle with warm salt water, Drink warm fluids like tea with honey, Use throat lozenges for relief.",
-    "diet": "Consume soft, warm foods and avoid spicy or acidic items.",
-    "lifestyle": "Avoid speaking loudly and rest your voice."
+    "remedy": "Here are a few remedies: Gargle with warm salt water, Drink warm fluids like tea with honey, Use throat lozenges for relief.",
+    "diet": "Drink warm haldi doodh (turmeric milk), ginger tea, and consume honey with warm water.",
+    "lifestyle": "Gargle with warm salt water 2-3 times a day and avoid cold beverages."
   },
   "sinusitis": {
     "disease name": "sinusitis",
-    "response": "Sinusitis leads to nasal congestion and facial pain. Proper hydration and medications can help. Would you like tips?",
+    "response": "Sinusitis causes congestion and headaches. Steam inhalation with essential oils can help. Need more remedies?",
     "symptoms": "Facial pain or pressure, nasal congestion, headache, post-nasal drip.",
-    "remedy": "Here are a few remedies:, Use saline nasal spray, Inhale steam or take hot showers, Take over-the-counter decongestants.",
-    "diet": "Drink warm fluids like soup or herbal tea, and avoid cold or sugary drinks.",
-    "lifestyle": "Use a humidifier and avoid allergens or pollutants that can worsen symptoms."
+    "remedy": "Here are a few remedies: Use saline nasal spray, Inhale steam or take hot showers, Take over-the-counter decongestants.",
+    "diet": "Drink warm tulsi (holy basil) and ginger tea. Avoid curd and cold foods at night.",
+    "lifestyle": "Perform steam inhalation, use a neti pot for nasal cleansing, and practice yoga like Anulom Vilom."
   },
   "rhinitis": {
     "disease name": "rhinitis",
@@ -189,11 +188,11 @@ const healthConditions = {
   },
   "diarrhea": {
     "disease name": "diarrhea",
-    "response": "Diarrhea can cause dehydration. Stay hydrated and eat bland foods. Would you like more suggestions?",
+    "response": "Diarrhea can cause dehydration. Drink ORS and eat light meals. Would you like more remedies?",
     "symptoms": "Frequent loose or watery stools, abdominal cramps, dehydration, nausea.",
-    "remedy": "Here are a few remedies:, Drink oral rehydration solutions, Eat bananas, rice, applesauce, and toast (BRAT diet), Avoid caffeine and fatty foods.",
-    "diet": "Consume electrolyte-rich drinks like coconut water, and avoid spicy and greasy foods.",
-    "lifestyle": "Practice proper hygiene and avoid contaminated food or water."
+    "remedy": "Here are a few remedies: Drink oral rehydration solutions, Eat bananas, rice, applesauce, and toast (BRAT diet), Avoid caffeine and fatty foods.",
+    "diet": "Eat khichdi, curd rice, and drink coconut water for hydration. Avoid spicy and oily foods.",
+    "lifestyle": "Wash hands frequently and avoid street food or unhygienic water sources."
   },
   "bronchitis": {
     "disease name": "bronchitis",
@@ -260,19 +259,19 @@ const healthConditions = {
   },
   "acidity (acid reflux)": {
     "disease name": "acidity (acid reflux)",
-    "response": "Acidity causes heartburn and discomfort. Lifestyle changes and antacids can provide relief. Need tips?",
+    "response": "Acidity can be relieved by drinking buttermilk or coconut water. Need more tips?",
     "symptoms": "Burning sensation in the chest, sour taste in the mouth, bloating, nausea.",
-    "remedy": "Here are a few remedies:, Avoid lying down immediately after meals, Elevate your head while sleeping, Take antacids or prescribed medications.",
-    "diet": "Eat small, frequent meals, avoid spicy and fatty foods, and include fiber-rich items.",
-    "lifestyle": "Avoid smoking, reduce alcohol intake, and maintain a healthy weight."
+    "remedy": "Here are a few remedies: Avoid lying down immediately after meals, Elevate your head while sleeping, Take antacids or prescribed medications.",
+    "diet": "Eat homemade curd, drink jeera (cumin) water, and consume fiber-rich foods like dalia (broken wheat).",
+    "lifestyle": "Avoid lying down immediately after meals and practice yoga for digestion."
   },
   "constipation": {
     "disease name": "constipation",
-    "response": "Constipation can cause discomfort and bloating. Increasing fiber and hydration can help. Would you like remedies?",
+    "response": "Constipation can be eased with a high-fiber diet and warm water in the morning. Need more tips?",
     "symptoms": "Infrequent bowel movements, difficulty passing stool, bloating, abdominal pain.",
-    "remedy": "Here are a few remedies:, Drink plenty of water, Include high-fiber foods in your diet, Take gentle laxatives if needed.",
-    "diet": "Consume fruits, vegetables, and whole grains, and avoid processed foods.",
-    "lifestyle": "Stay active with regular exercise and establish a consistent bathroom routine."
+    "remedy": "Here are a few remedies: Drink plenty of water, Include high-fiber foods in your diet, Take gentle laxatives if needed.",
+    "diet": "Eat soaked raisins, figs, flaxseeds, and drink warm water with lemon.",
+    "lifestyle": "Walk after meals and practice yoga poses like Pawanmuktasana."
   },
   "indigestion": {
     "disease name": "indigestion",
@@ -990,7 +989,7 @@ function initializeChat() {
   `;
   optionsContainer.appendChild(heading);
 
-  const options = ["Book Teleconsultation", "Health Queries"];
+  const options = ["Book Teleconsultation", "Health Concerns"];
 
   options.forEach((option) => {
     const button = document.createElement("button");
@@ -1068,9 +1067,9 @@ function handleOptionSelection(option) {
     container.appendChild(dateInput);
 
     chatBody.appendChild(container);
-  } else if (option === "Health Queries") {
+  } else if (option === "Health Concerns") {
     const healthQueryDiv = document.createElement("div");
-    healthQueryDiv.textContent = "Please describe your health query";
+    healthQueryDiv.textContent = "Please describe your health concern";
     healthQueryDiv.style.cssText = `
       background: white;
       color: black;
