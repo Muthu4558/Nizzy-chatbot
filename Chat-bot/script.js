@@ -44,7 +44,6 @@ function botReply(chatBody, message) {
 const healthConditions = {
   "headache": {
     "disease name": "headache",
-    "synonyms": ["headache", "head pain", "head ache", "headpain"],
     "response": "It seems you have a headache. Make sure to stay hydrated, rest, and avoid stress. Do you need more suggestions?",
     "symptoms": "Throbbing or constant pain in the head, sensitivity to light or sound, nausea.",
     "remedy": "Here are few Remedies:, Drink water, Take rest in a quiet room, Take over-the-counter pain relievers if necessary.",
