@@ -78,7 +78,8 @@ let healthConversationState = {
   condition: null,
   choices: [],
   duration: null,
-  history: null
+  history: null,
+  additionalSymptoms: null
 };
 
 // ============ Fuzzy match function. =============
@@ -123,10 +124,33 @@ function getMatchingConditions(userInput) {
 
 // ================= Enhanced Healthcare Chatbot Interaction ==================
 async function healthcareChatbot(userInput) {
+  // First, convert to lowercase and remove common words that are not disease names.
   const lowerInput = userInput.toLowerCase();
-  if (lowerInput.includes("remedy") || lowerInput.includes("diet") ||
-      lowerInput.includes("lifestyle") || lowerInput.includes("more info") ||
-      lowerInput.includes("appointment")) {
+  const ignoredWords = ["i", "have", "am", "was", "were", "having"];
+  const tokens = lowerInput.split(" ").filter(word => !ignoredWords.includes(word));
+  const cleanedInput = tokens.join(" ").trim();
+
+  // If the cleaned input exactly matches a disease name from the JSON, use it.
+  let diseaseNames = Object.keys(healthConditions);
+  let exactMatch = diseaseNames.find(
+    (disease) => disease.toLowerCase() === cleanedInput
+  );
+  if (exactMatch) {
+    userContext.lastCondition = exactMatch;
+    healthConversationState.condition = exactMatch;
+    // Set a new step to ask for additional symptoms
+    healthConversationState.step = "additionalSymptoms";
+    return `You have selected ${exactMatch}.\nAlong with this condition, are you having any other symptoms?`;
+  }
+
+  // If the user asks for remedy/diet/lifestyle/more info/appointment.
+  if (
+    lowerInput.includes("remedy") ||
+    lowerInput.includes("diet") ||
+    lowerInput.includes("lifestyle") ||
+    lowerInput.includes("more info") ||
+    lowerInput.includes("appointment")
+  ) {
     let condition = userContext.lastCondition;
     if (!condition) {
       return "I'm sorry, I couldn't determine your condition. Could you please describe your symptoms again?";
@@ -150,16 +174,15 @@ async function healthcareChatbot(userInput) {
   // "Choose" step: when multiple conditions match.
   if (healthConversationState.step === "choose") {
     const choice = healthConversationState.choices.find(
-      c => c.toLowerCase() === lowerInput.trim()
+      (c) => c.toLowerCase() === cleanedInput.trim()
     );
     if (choice) {
       userContext.lastCondition = choice;
       healthConversationState.condition = choice;
-      // Move to additional details stage.
-      healthConversationState.step = 1;
-      return `Great, you selected ${choice}. Could you please provide more details about your symptoms (for example, intensity or any additional issues)?`;
+      // Move directly to additional symptoms question
+      healthConversationState.step = "additionalSymptoms";
+      return `Great, you selected ${choice}.\nAlong with this condition, are you having any other symptoms?`;
     } else {
-      // List conditions one by one.
       let conditionList = healthConversationState.choices
         .map((cond, i) => `${i + 1}. ${cond}`)
         .join("\n");
@@ -175,17 +198,17 @@ async function healthcareChatbot(userInput) {
     if (nlpResult && nlpResult.confidence > 0.7 && nlpResult.intent !== "unknown") {
       condition = nlpResult.intent;
     }
-    // Also try fuzzy matching.
-    const matches = getMatchingConditions(userInput);
+    // Also try fuzzy matching using the cleaned input.
+    const matches = getMatchingConditions(cleanedInput);
     if (matches.length === 0) {
       return "I'm here to help, but I didn't quite understand your symptoms. Could you please rephrase or provide more details?";
     } else if (matches.length === 1) {
       condition = condition || matches[0];
       userContext.lastCondition = condition;
       healthConversationState.condition = condition;
-      // Move to additional details stage.
-      healthConversationState.step = 1;
-      return `I see you might be experiencing ${condition}. Could you please provide more details about your symptoms (for example, any extra issues or intensity)?`;
+      // Move directly to additional symptoms question.
+      healthConversationState.step = "additionalSymptoms";
+      return `I see you might be experiencing ${condition}.\nAlong with this condition, are you having any other symptoms?`;
     } else {
       healthConversationState.step = "choose";
       healthConversationState.choices = matches;
@@ -193,20 +216,21 @@ async function healthcareChatbot(userInput) {
       return `I found several possible conditions based on your symptoms:\n${conditionList}\nPlease type the name of the condition you think best describes your problem.`;
     }
   }
-  // Step 1: Follow-up details received.
-  else if (healthConversationState.step === 1) {
-    // Ask the user how long they have been experiencing the symptoms.
+  
+  // New step: Additional symptoms. Capture the answer and then ask for duration.
+  else if (healthConversationState.step === "additionalSymptoms") {
+    healthConversationState.additionalSymptoms = userInput;
     healthConversationState.step = "duration";
-    return `Thank you for the details. Could you please tell me how long you have been experiencing these symptoms? (For example, "2 days", "1 week", etc.)`;
+    return `Thank you for sharing.\nCould you please tell me how long you have been experiencing these symptoms? (For example, "2 days", "1 week", etc.)`;
   }
+  
   // Step "duration": Process the duration provided.
   else if (healthConversationState.step === "duration") {
-    // Store the duration (we do minimal validation here).
     healthConversationState.duration = userInput;
-    // Now ask if they have experienced similar symptoms before.
     healthConversationState.step = "history";
     return `Got it. Have you experienced these symptoms before? (Please answer with "yes" or "no")`;
   }
+  
   // Step "history": Process the user's answer about symptom history.
   else if (healthConversationState.step === "history") {
     if (lowerInput.includes("yes")) {
@@ -217,18 +241,18 @@ async function healthcareChatbot(userInput) {
       healthConversationState.history = "new";
       healthConversationState.step = "advice";
       return `Thank you for letting me know this is a new occurrence. New symptoms can sometimes be concerning, so please keep an eye on how you feel. 
-      \nWould you like advice on\n
+      \nWould you like advice on
       \n- Remedy
       \n- Diet
       \n- Lifestyle adjustments  
       \nYou may also choose:
       \n- More info (for detailed information about your condition)
       \n- Book teleconsultation (to schedule an appointment)`;
-  }
-   else {
+    } else {
       return `Please answer with "yes" or "no" if you have experienced these symptoms before.`;
     }
   }
+  
   // Step "advice": Advice/interaction stage.
   else if (healthConversationState.step === "advice") {
     let condition = healthConversationState.condition;
@@ -287,8 +311,8 @@ function displayConditionInfo(condition) {
             cursor: pointer;
             transition: 0.3s;
     `;
-    button.onmouseover = () => button.style.background = "#1b828a";
-    button.onmouseleave = () => button.style.background = "#229ea6";
+    button.onmouseover = () => (button.style.background = "#1b828a");
+    button.onmouseleave = () => (button.style.background = "#229ea6");
     button.onclick = function () {
       responseContainer.innerHTML = `<p><strong>${type.charAt(0).toUpperCase() + type.slice(1)}:</strong> ${healthConditions[condition][type]}</p>`;
     };
@@ -407,6 +431,7 @@ function handleOptionSelection(option) {
     healthConversationState.choices = [];
     healthConversationState.duration = null;
     healthConversationState.history = null;
+    healthConversationState.additionalSymptoms = null;
   }
 
   if (option === "Book Teleconsultation") {
