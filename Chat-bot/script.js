@@ -157,7 +157,8 @@ async function healthcareChatbot(userInput) {
       healthConversationState.condition = choice;
       // Move to additional details stage.
       healthConversationState.step = 1;
-      return `Great, you selected ${choice}. Could you please provide more details about your symptoms (for example, intensity or any additional issues)?`;
+      return ` you selected ${choice}. Could you please provide more details about your symptoms (for example, intensity or any additional issues)?`;
+
     } else {
       // List conditions one by one.
       let conditionList = healthConversationState.choices
@@ -185,7 +186,7 @@ async function healthcareChatbot(userInput) {
       healthConversationState.condition = condition;
       // Move to additional details stage.
       healthConversationState.step = 1;
-      return `I see you might be experiencing ${condition}. Could you please provide more details about your symptoms (for example, any extra issues or intensity)?`;
+      return `I feel sorry for that you are experiencing ${condition}. Along with these, Have you experiencing any other symptoms ? `;
     } else {
       healthConversationState.step = "choose";
       healthConversationState.choices = matches;
@@ -197,7 +198,7 @@ async function healthcareChatbot(userInput) {
   else if (healthConversationState.step === 1) {
     // Ask the user how long they have been experiencing the symptoms.
     healthConversationState.step = "duration";
-    return `Thank you for the details. Could you please tell me how long you have been experiencing these symptoms? (For example, "2 days", "1 week", etc.)`;
+    return `Could you please tell me how long you have been experiencing these symptoms? (For example, "2 days", "1 week", etc.)`;
   }
   // Step "duration": Process the duration provided.
   else if (healthConversationState.step === "duration") {
@@ -212,7 +213,7 @@ async function healthcareChatbot(userInput) {
     if (lowerInput.includes("yes")) {
       healthConversationState.history = "recurring";
       healthConversationState.step = "advice";
-      return `I see that these symptoms are recurring. It might be important to consult a professional if this continues. Would you like advice on remedy, diet, or lifestyle adjustments? You may also type "more info" for detailed information about your condition or "appointment" to book a teleconsultation.`;
+      return `It might be important to consult a professional if this continues. Would you like advice on remedy, diet, or lifestyle adjustments? You may also type "more info" for detailed information about your condition or "appointment" to book a teleconsultation.`;
     } else if (lowerInput.includes("no")) {
       healthConversationState.history = "new";
       healthConversationState.step = "advice";
