@@ -7,6 +7,14 @@
         "diet": "Consume fresh fruits, coconut water, and light home-cooked meals. Avoid processed and oily foods.",
         "lifestyle": "Follow a regular sleep schedule, practice yoga or meditation, and limit mobile or screen time before bed."
     },
+    "head ache": {
+        "disease name": "headache",
+        "response": "It looks like you're experiencing a headache. Drink plenty of water and rest in a quiet place. Applying a cold or warm compress on the forehead may help.",
+        "symptoms": "Throbbing or constant pain in the head, sensitivity to light or sound, nausea.",
+        "remedy": "Here are a few remedies:, Apply a cold or warm compress on your forehead, Drink plenty of water and stay hydrated, Have a cup of ginger or tulsi (holy basil) tea.",
+        "diet": "Consume fresh fruits, coconut water, and light home-cooked meals. Avoid processed and oily foods.",
+        "lifestyle": "Follow a regular sleep schedule, practice yoga or meditation, and limit mobile or screen time before bed."
+    },
     "fever": {
         "disease name": "fever",
         "response": "Fever can be uncomfortable, but it’s often a sign that your body is fighting an infection. Drink warm fluids like herbal kadha or tulsi tea and take ample rest.",
@@ -184,6 +192,14 @@
         "lifestyle": "Maintain regular sleep patterns and manage stress effectively."
     },
     "common cold": {
+        "disease name": "common cold",
+        "response": "The common cold causes sneezing, a runny nose, and fatigue. Rest and hydration can help. Need advice?",
+        "symptoms": "Runny nose, sneezing, sore throat, mild fever, cough.",
+        "remedy": "Here are a few remedies:, Drink warm fluids, Gargle with saltwater, Use steam inhalation to clear nasal passages.",
+        "diet": "Consume vitamin C-rich foods like oranges and stay hydrated with warm soups.",
+        "lifestyle": "Avoid crowded places and wash your hands frequently to prevent spread."
+    },
+    "cold": {
         "disease name": "common cold",
         "response": "The common cold causes sneezing, a runny nose, and fatigue. Rest and hydration can help. Need advice?",
         "symptoms": "Runny nose, sneezing, sore throat, mild fever, cough.",

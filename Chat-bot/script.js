@@ -74,7 +74,7 @@ let userContext = {
 
 //=========== Global conversation state for Health Concerns interaction.===========
 let healthConversationState = {
-  step: 0,        
+  step: 0,
   condition: null,
   choices: [],
   duration: null,
@@ -89,7 +89,6 @@ function fuzzyMatch(input, target) {
   const inputWords = input.split(" ");
   const targetWords = target.split(", ");
   let matchScore = 0;
-
   inputWords.forEach((word) => {
     targetWords.forEach((targetWord) => {
       if (targetWord.includes(word)) {
@@ -97,8 +96,24 @@ function fuzzyMatch(input, target) {
       }
     });
   });
-
   return (matchScore / targetWords.length) * 100;
+}
+
+// New Helper: Count the number of matching words (symptoms)
+function fuzzyMatchCount(input, target) {
+  input = input.toLowerCase();
+  target = target.toLowerCase();
+  const inputWords = input.split(" ");
+  const targetWords = target.split(", ");
+  let count = 0;
+  inputWords.forEach(word => {
+    targetWords.forEach(targetWord => {
+      if (targetWord.includes(word)) {
+        count++;
+      }
+    });
+  });
+  return count;
 }
 
 //============= Helper: Get all matching conditions based on symptoms.===============
@@ -122,6 +137,198 @@ function getMatchingConditions(userInput) {
   return matches.map(m => m.condition);
 }
 
+// ================= New Helper: Validate Duration Input ==================
+function validateDuration(input) {
+  const lowerInput = input.toLowerCase();
+  // Check if there is any digit in the input (numeric duration)
+  if (/\d/.test(lowerInput)) {
+    return true;
+  }
+  // Define allowed keywords (including "today", "yesterday", etc.)
+  const keywords = ["today", "yesterday", "yestraday", "morning", "evening", "afternoon", "forenoon", "past", "since", "week", "weeks", "month", "months"];
+  return keywords.some(keyword => lowerInput.includes(keyword));
+}
+
+// ================= Updated Helper: Display Yes/No Buttons ==================
+// When a button is clicked, a user message ("Yes" or "No") is appended and the container remains visible.
+function displayYesNoButtons(message, onYes, onNo) {
+  const chatBody = document.getElementById("chatBody");
+
+  const container = document.createElement("div");
+  container.style.cssText = `
+    background: #f0f0f0;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    font-family: Arial, sans-serif;
+  `;
+
+  const msgElement = document.createElement("div");
+  msgElement.textContent = message;
+  msgElement.style.cssText = "margin-bottom: 10px;";
+  container.appendChild(msgElement);
+
+  const buttonContainer = document.createElement("div");
+  buttonContainer.style.cssText = "display: flex; gap: 10px;";
+
+  const yesButton = document.createElement("button");
+  yesButton.textContent = "Yes";
+  yesButton.style.cssText = `
+    background: #229ea6;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  `;
+  yesButton.addEventListener("click", function () {
+    // Append user message "Yes"
+    const userMsg = document.createElement("div");
+    userMsg.textContent = "Yes";
+    userMsg.style.cssText = "background: #229ea6; color: white; padding: 8px; border-radius: 5px; margin-bottom: 5px; align-self: flex-end; font-family: Arial, sans-serif;";
+    chatBody.appendChild(userMsg);
+    chatBody.scrollTop = chatBody.scrollHeight;
+    onYes();
+  });
+
+  const noButton = document.createElement("button");
+  noButton.textContent = "No";
+  noButton.style.cssText = `
+    background: #229ea6;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  `;
+  noButton.addEventListener("click", function () {
+    // Append user message "No"
+    const userMsg = document.createElement("div");
+    userMsg.textContent = "No";
+    userMsg.style.cssText = "background: #229ea6; color: white; padding: 8px; border-radius: 5px; margin-bottom: 5px; align-self: flex-end; font-family: Arial, sans-serif;";
+    chatBody.appendChild(userMsg);
+    chatBody.scrollTop = chatBody.scrollHeight;
+    onNo();
+  });
+
+  buttonContainer.appendChild(yesButton);
+  buttonContainer.appendChild(noButton);
+  container.appendChild(buttonContainer);
+
+  chatBody.appendChild(container);
+  chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+// ================= New Helper: Display Advice Options ==================
+function displayAdviceOptions(message) {
+  const chatBody = document.getElementById("chatBody");
+  const container = document.createElement("div");
+  container.style.cssText = `
+    background: #f0f0f0;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    font-family: Arial, sans-serif;
+  `;
+  
+  const msgElement = document.createElement("div");
+  msgElement.textContent = message;
+  msgElement.style.cssText = "margin-bottom: 10px;";
+  container.appendChild(msgElement);
+
+  const buttonContainer = document.createElement("div");
+  buttonContainer.style.cssText = "display: flex; gap: 10px;";
+
+  const moreInfoButton = document.createElement("button");
+  moreInfoButton.textContent = "More Info";
+  moreInfoButton.style.cssText = `
+    background: #229ea6;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  `;
+  moreInfoButton.addEventListener("click", function() {
+    displayConditionInfo(healthConversationState.condition);
+  });
+
+  const bookButton = document.createElement("button");
+  bookButton.textContent = "Book Teleconsultation";
+  bookButton.style.cssText = `
+    background: #229ea6;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  `;
+  bookButton.addEventListener("click", function() {
+    handleOptionSelection("Book Teleconsultation");
+  });
+  
+  // New: Add a Close button near "Book Teleconsultation"
+  const closeButton = document.createElement("button");
+  closeButton.textContent = "Close";
+  closeButton.style.cssText = `
+    background: red;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  `;
+  closeButton.addEventListener("click", function() {
+    // Close the chat container and refresh the page
+    document.getElementById("chatContainer").style.display = "none";
+    location.reload();
+  });
+
+  buttonContainer.appendChild(moreInfoButton);
+  buttonContainer.appendChild(bookButton);
+  buttonContainer.appendChild(closeButton);
+  container.appendChild(buttonContainer);
+
+  chatBody.appendChild(container);
+  chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+// ================= New Helper: Display Book Teleconsultation Button Only ==================
+function displayBookTeleconsultation(message) {
+  const chatBody = document.getElementById("chatBody");
+  const container = document.createElement("div");
+  container.style.cssText = `
+    background: #f0f0f0;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    font-family: Arial, sans-serif;
+  `;
+  
+  const msgElement = document.createElement("div");
+  msgElement.textContent = message;
+  msgElement.style.cssText = "margin-bottom: 10px;";
+  container.appendChild(msgElement);
+  
+  const bookButton = document.createElement("button");
+  bookButton.textContent = "Book Teleconsultation";
+  bookButton.style.cssText = `
+    background: #229ea6;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  `;
+  bookButton.addEventListener("click", function() {
+    handleOptionSelection("Book Teleconsultation");
+  });
+  
+  container.appendChild(bookButton);
+  chatBody.appendChild(container);
+  chatBody.scrollTop = chatBody.scrollHeight;
+}
+
 // ================= Enhanced Healthcare Chatbot Interaction ==================
 async function healthcareChatbot(userInput) {
   // First, convert to lowercase and remove common words that are not disease names.
@@ -138,9 +345,19 @@ async function healthcareChatbot(userInput) {
   if (exactMatch) {
     userContext.lastCondition = exactMatch;
     healthConversationState.condition = exactMatch;
-    // Set a new step to ask for additional symptoms
-    healthConversationState.step = "additionalSymptoms";
-    return `You have selected ${exactMatch}.\nAlong with this condition, are you having any other symptoms?`;
+    healthConversationState.step = "confirmAdditionalSymptoms";
+    displayYesNoButtons(
+      `I feel sorry that you are experiencing ${exactMatch}. Along with this condition, are you having any other symptoms?`,
+      function () {
+        healthConversationState.step = "additionalSymptoms";
+        botReply(document.getElementById("chatBody"), "Please describe your additional symptoms.");
+      },
+      function () {
+        healthConversationState.step = "duration";
+        botReply(document.getElementById("chatBody"), "Okay, could you please tell me how long you have been experiencing these symptoms? (For example, '2 days', '1 week', etc.)");
+      }
+    );
+    return "";
   }
 
   // If the user asks for remedy/diet/lifestyle/more info/appointment.
@@ -179,9 +396,8 @@ async function healthcareChatbot(userInput) {
     if (choice) {
       userContext.lastCondition = choice;
       healthConversationState.condition = choice;
-      // Move directly to additional symptoms question
       healthConversationState.step = "additionalSymptoms";
-      return `Great, you selected ${choice}.\nAlong with this condition, are you having any other symptoms?`;
+      return `okay , Additional you have ${choice}.\nAlong with this condition, are you having any other symptoms?`;
     } else {
       let conditionList = healthConversationState.choices
         .map((cond, i) => `${i + 1}. ${cond}`)
@@ -192,13 +408,11 @@ async function healthcareChatbot(userInput) {
 
   // Step 0: Initial query processing.
   if (healthConversationState.step === 0) {
-    // Try NLP prediction.
     let nlpResult = await predictIntent(userInput);
     let condition = null;
     if (nlpResult && nlpResult.confidence > 0.7 && nlpResult.intent !== "unknown") {
       condition = nlpResult.intent;
     }
-    // Also try fuzzy matching using the cleaned input.
     const matches = getMatchingConditions(cleanedInput);
     if (matches.length === 0) {
       return "I'm here to help, but I didn't quite understand your symptoms. Could you please rephrase or provide more details?";
@@ -206,70 +420,99 @@ async function healthcareChatbot(userInput) {
       condition = condition || matches[0];
       userContext.lastCondition = condition;
       healthConversationState.condition = condition;
-      // Move directly to additional symptoms question.
-      healthConversationState.step = "additionalSymptoms";
-      return `I see you might be experiencing ${condition}.\nAlong with this condition, are you having any other symptoms?`;
+      healthConversationState.step = "confirmAdditionalSymptoms";
+      displayYesNoButtons(
+        `I feel sorry that you experiencing ${condition}.\nAlong with this condition, are you having any other symptoms?`,
+        function () {
+          healthConversationState.step = "additionalSymptoms";
+          botReply(document.getElementById("chatBody"), "Please describe your additional symptoms.");
+        },
+        function () {
+          healthConversationState.step = "duration";
+          botReply(document.getElementById("chatBody"), "Could you please tell me how long you have been experiencing these symptoms? (For example, '2 days', '1 week', etc.)");
+        }
+      );
+      return "";
     } else {
-      healthConversationState.step = "choose";
-      healthConversationState.choices = matches;
-      let conditionList = matches.map((cond, i) => `${i + 1}. ${cond}`).join("\n");
-      return `I found several possible conditions based on your symptoms:\n${conditionList}\nPlease type the name of the condition you think best describes your problem.`;
+      const topMatch = matches[0];
+      const count = fuzzyMatchCount(cleanedInput, healthConditions[topMatch].symptoms);
+      if (count >= 3) {
+        condition = topMatch;
+        userContext.lastCondition = condition;
+        healthConversationState.condition = condition;
+        healthConversationState.step = "confirmAdditionalSymptoms";
+        displayYesNoButtons(
+          `Based on your input, you might be experiencing ${condition}.\nAlong with this condition, are you having any other symptoms?`,
+          function () {
+            healthConversationState.step = "additionalSymptoms";
+            botReply(document.getElementById("chatBody"), "Please describe your additional symptoms.");
+          },
+          function () {
+            healthConversationState.step = "duration";
+            botReply(document.getElementById("chatBody"), "Could you please tell me how long you have been experiencing these symptoms? (For example, '2 days', '1 week', etc.)");
+          }
+        );
+        return "";
+      } else {
+        healthConversationState.step = "multipleSymptoms";
+        return "Your symptoms match several diseases, can you describe more symptoms?";
+      }
     }
   }
   
-  // New step: Additional symptoms. Capture the answer and then ask for duration.
+  else if (healthConversationState.step === "multipleSymptoms") {
+    const validMatches = getMatchingConditions(userInput);
+    if (validMatches.length === 0) {
+      return "Please enter valid symptoms or disease";
+    }
+    healthConversationState.additionalSymptoms = userInput;
+    healthConversationState.step = "advice";
+    displayBookTeleconsultation("Better I could suggest you to book a teleconsultation.");
+    return "";
+  }
+  
   else if (healthConversationState.step === "additionalSymptoms") {
+    const validMatches = getMatchingConditions(userInput);
+    if (validMatches.length === 0) {
+      return "Please enter valid symptoms or disease";
+    }
     healthConversationState.additionalSymptoms = userInput;
     healthConversationState.step = "duration";
     return `Thank you for sharing.\nCould you please tell me how long you have been experiencing these symptoms? (For example, "2 days", "1 week", etc.)`;
   }
   
-  // Step "duration": Process the duration provided.
   else if (healthConversationState.step === "duration") {
+    if (!validateDuration(userInput)) {
+      return "Please enter how long you have been experiencing these symptoms?";
+    }
     healthConversationState.duration = userInput;
     healthConversationState.step = "history";
-    return `Got it. Have you experienced these symptoms before? (Please answer with "yes" or "no")`;
+    displayYesNoButtons(
+      "Got it. Have you experienced these symptoms before?",
+      function () {
+        healthConversationState.history = "recurring";
+        healthConversationState.step = "advice";
+        displayAdviceOptions("These symptoms are recurring. It might be important to consult a professional if this continues. Would you like more info or book a teleconsultation?");
+      },
+      function () {
+        healthConversationState.history = "new";
+        healthConversationState.step = "advice";
+        displayAdviceOptions("This is a new occurrence. New symptoms can sometimes be concerning, so please keep an eye on how you feel. Would you like more info or book a teleconsultation?");
+      }
+    );
+    return "";
   }
   
-  // Step "history": Process the user's answer about symptom history.
-  else if (healthConversationState.step === "history") {
-    if (lowerInput.includes("yes")) {
-      healthConversationState.history = "recurring";
-      healthConversationState.step = "advice";
-      return `I see that these symptoms are recurring. It might be important to consult a professional if this continues. Would you like advice on remedy, diet, or lifestyle adjustments? You may also type "more info" for detailed information about your condition or "appointment" to book a teleconsultation.`;
-    } else if (lowerInput.includes("no")) {
-      healthConversationState.history = "new";
-      healthConversationState.step = "advice";
-      return `Thank you for letting me know this is a new occurrence. New symptoms can sometimes be concerning, so please keep an eye on how you feel. 
-      \nWould you like advice on
-      \n- Remedy
-      \n- Diet
-      \n- Lifestyle adjustments  
-      \nYou may also choose:
-      \n- More info (for detailed information about your condition)
-      \n- Book teleconsultation (to schedule an appointment)`;
-    } else {
-      return `Please answer with "yes" or "no" if you have experienced these symptoms before.`;
-    }
-  }
-  
-  // Step "advice": Advice/interaction stage.
   else if (healthConversationState.step === "advice") {
-    let condition = healthConversationState.condition;
-    if (lowerInput.includes("remedy")) {
-      return healthConditions[condition].remedy;
-    } else if (lowerInput.includes("diet")) {
-      return healthConditions[condition].diet;
-    } else if (lowerInput.includes("lifestyle")) {
-      return healthConditions[condition].lifestyle;
-    } else if (lowerInput.includes("more info")) {
-      displayConditionInfo(condition);
+    if (lowerInput.includes("more info")) {
+      displayConditionInfo(healthConversationState.condition);
       return "";
-    } else if (lowerInput.includes("appointment")) {
+    } else if (lowerInput.includes("appointment") || lowerInput.includes("book")) {
       handleOptionSelection("Book Teleconsultation");
       return "";
     } else {
-      return "Could you please specify if you need advice on remedy, diet, or lifestyle? You may also type 'more info' for additional details about your condition or 'appointment' to book a consultation.";
+      displayAdviceOptions("Would you like more info or book a teleconsultation?");
+      return "";
     }
   }
 }
@@ -425,7 +668,6 @@ function handleOptionSelection(option) {
   chatBody.appendChild(userMessage);
 
   if (option === "Health Concerns") {
-    // Reset the conversation state for a new health concern conversation.
     healthConversationState.step = 0;
     healthConversationState.condition = null;
     healthConversationState.choices = [];
@@ -445,7 +687,6 @@ function handleOptionSelection(option) {
         font-family: Arial, sans-serif;
         margin: 10px 0;
     `;
-
     const message = document.createElement("p");
     message.textContent = "Select Date to Book Your Teleconsultation:";
     message.style.cssText = `
@@ -454,7 +695,6 @@ function handleOptionSelection(option) {
         font-family: Arial, sans-serif;
     `;
     container.appendChild(message);
-
     const dateInput = document.createElement("input");
     dateInput.type = "date";
     dateInput.min = new Date(new Date().setDate(new Date().getDate() + 1))
@@ -468,7 +708,6 @@ function handleOptionSelection(option) {
     `;
     dateInput.addEventListener("change", () => handleDateSelection(dateInput.value));
     container.appendChild(dateInput);
-
     chatBody.appendChild(container);
   } else if (option === "Health Concerns") {
     const healthQueryDiv = document.createElement("div");
@@ -487,10 +726,8 @@ function handleOptionSelection(option) {
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     `;
     chatBody.appendChild(healthQueryDiv);
-
     const inputBox = document.getElementById("userInput");
     const sendButton = document.getElementById("sendButton");
-
     inputBox.type = "text";
     inputBox.placeholder = "Enter your query...";
     inputBox.style.cssText = `
@@ -505,8 +742,6 @@ function handleOptionSelection(option) {
       outline: none;
       transition: border-color 0.3s ease;
     `;
-
-    // Function to add user message to chat.
     function addUserMessage(message) {
       const userMessage = document.createElement("div");
       userMessage.textContent = message;
@@ -523,7 +758,6 @@ function handleOptionSelection(option) {
       chatBody.appendChild(userMessage);
       chatBody.scrollTop = chatBody.scrollHeight;
     }
-
     inputBox.addEventListener("keypress", async (e) => {
       if (e.key === "Enter") {
         const userQuery = e.target.value.trim();
@@ -535,7 +769,6 @@ function handleOptionSelection(option) {
         }
       }
     });
-
     sendButton.addEventListener("click", async () => {
       const userQuery = inputBox.value.trim();
       if (userQuery) {
@@ -545,7 +778,6 @@ function handleOptionSelection(option) {
         inputBox.value = "";
       }
     });
-
     chatBody.appendChild(inputBox);
   }
   chatBody.scrollTop = chatBody.scrollHeight;
@@ -554,7 +786,6 @@ function handleOptionSelection(option) {
 // ================= Handle Date Selection for Teleconsultation ==================
 function handleDateSelection(selectedDate) {
   const chatBody = document.getElementById("chatBody");
-
   const userMessage = document.createElement("div");
   userMessage.textContent = `Selected Date: ${selectedDate}`;
   userMessage.style.cssText = `
@@ -567,7 +798,6 @@ function handleDateSelection(selectedDate) {
       font-family: Arial, sans-serif;
   `;
   chatBody.appendChild(userMessage);
-
   const container = document.createElement("div");
   container.style.cssText = `
       background: #ffffff;
@@ -578,7 +808,6 @@ function handleDateSelection(selectedDate) {
       margin: 10px 0;
       font-family: Arial, sans-serif;
   `;
-
   const message = document.createElement("p");
   message.textContent = `Choose Your Time Slot for ${selectedDate}:`;
   message.style.cssText = `
@@ -586,7 +815,6 @@ function handleDateSelection(selectedDate) {
       margin-bottom: 10px;
   `;
   container.appendChild(message);
-
   const timeSlots = ["10:00 AM", "11:00 AM", "12:00 PM", "2:00 PM", "3:00 PM"];
   timeSlots.forEach((slot) => {
     const button = document.createElement("button");
@@ -608,7 +836,6 @@ function handleDateSelection(selectedDate) {
     );
     container.appendChild(button);
   });
-
   chatBody.appendChild(container);
   chatBody.scrollTop = chatBody.scrollHeight;
 }
@@ -616,7 +843,6 @@ function handleDateSelection(selectedDate) {
 // ================= Handle Time Slot Selection and Collect Booking Details ==================
 function handleTimeSlotSelection(date, slot) {
   const chatBody = document.getElementById("chatBody");
-
   const userMessage = document.createElement("div");
   userMessage.textContent = `Selected Time Slot: ${slot}`;
   userMessage.style.cssText = `
@@ -628,7 +854,6 @@ function handleTimeSlotSelection(date, slot) {
       align-self: flex-end;
   `;
   chatBody.appendChild(userMessage);
-
   const detailsContainer = document.createElement("div");
   detailsContainer.style.cssText = `
     margin: 10px 0;
@@ -638,7 +863,6 @@ function handleTimeSlotSelection(date, slot) {
     border: 1px solid #ccc;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   `;
-
   const botMessage = document.createElement("p");
   botMessage.textContent = "Please share the following details:";
   botMessage.style.cssText = `
@@ -648,9 +872,7 @@ function handleTimeSlotSelection(date, slot) {
     font-size: 16px;
   `;
   detailsContainer.appendChild(botMessage);
-
   const userInputs = {};
-
   const nameInput = document.createElement("input");
   nameInput.type = "text";
   nameInput.placeholder = "Full Name";
@@ -668,7 +890,6 @@ function handleTimeSlotSelection(date, slot) {
   `;
   userInputs["Full Name"] = nameInput;
   detailsContainer.appendChild(nameInput);
-
   const ageInput = document.createElement("input");
   ageInput.type = "number";
   ageInput.placeholder = "Age";
@@ -687,7 +908,6 @@ function handleTimeSlotSelection(date, slot) {
   `;
   userInputs["Age"] = ageInput;
   detailsContainer.appendChild(ageInput);
-
   const genderInput = document.createElement("select");
   genderInput.style.cssText = `
     background: #f9f9f9;
@@ -709,7 +929,6 @@ function handleTimeSlotSelection(date, slot) {
   });
   userInputs["Gender"] = genderInput;
   detailsContainer.appendChild(genderInput);
-
   const mobileInput = document.createElement("input");
   mobileInput.type = "number";
   mobileInput.placeholder = "Mobile Number";
@@ -727,7 +946,6 @@ function handleTimeSlotSelection(date, slot) {
   `;
   userInputs["Mobile Number"] = mobileInput;
   detailsContainer.appendChild(mobileInput);
-
   const submitButton = document.createElement("button");
   submitButton.textContent = "Submit";
   submitButton.style.cssText = `
@@ -743,30 +961,25 @@ function handleTimeSlotSelection(date, slot) {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   `;
   detailsContainer.appendChild(submitButton);
-
   chatBody.appendChild(detailsContainer);
-
+  
   // Function to handle form submission.
   function handleSubmit() {
     let allFieldsFilled = true;
     const collectedData = {};
-
     for (const field in userInputs) {
       const input = userInputs[field];
       const value = input.value.trim();
-
       if (field === "Full Name" && !/^[a-zA-Z\s]+$/.test(value)) {
         input.style.border = "1px solid red";
         allFieldsFilled = false;
         continue;
       }
-
       if (field === "Gender" && value === "") {
         input.style.border = "1px solid red";
         allFieldsFilled = false;
         continue;
       }
-
       if (!value) {
         input.style.border = "1px solid red";
         allFieldsFilled = false;
@@ -775,7 +988,6 @@ function handleTimeSlotSelection(date, slot) {
         collectedData[field] = value;
       }
     }
-
     if (allFieldsFilled) {
       const otpContainer = document.createElement("div");
       otpContainer.style.cssText = `
@@ -786,7 +998,6 @@ function handleTimeSlotSelection(date, slot) {
         border: 1px solid #ccc;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       `;
-
       const otpMessage = document.createElement("p");
       otpMessage.textContent = `OTP sent to ${collectedData["Mobile Number"]}. Verify your number:`;
       otpMessage.style.cssText = `
@@ -795,7 +1006,6 @@ function handleTimeSlotSelection(date, slot) {
         font-size: 16px;
       `;
       otpContainer.appendChild(otpMessage);
-
       const otpInput = document.createElement("input");
       otpInput.type = "text";
       otpInput.placeholder = "Enter OTP";
@@ -812,7 +1022,6 @@ function handleTimeSlotSelection(date, slot) {
         otpInput.value = otpInput.value.replace(/\D/g, "");
       });
       otpContainer.appendChild(otpInput);
-
       const verifyButton = document.createElement("button");
       verifyButton.textContent = "Verify";
       verifyButton.style.cssText = `
@@ -829,7 +1038,6 @@ function handleTimeSlotSelection(date, slot) {
       `;
       verifyButton.addEventListener("click", () => {
         const confirmationMessage = document.createElement("div");
-
         confirmationMessage.innerHTML = `✅ Booking Confirmation!<br><br>
           📅 Date: ${date}<br>
           ⏰ Time: ${slot}<br>
@@ -848,6 +1056,24 @@ function handleTimeSlotSelection(date, slot) {
           margin-top: 10px;
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         `;
+        // Append a Close button to the Booking Confirmation
+        const closeConfirmationBtn = document.createElement("button");
+        closeConfirmationBtn.textContent = "Close";
+        closeConfirmationBtn.style.cssText = `
+          background: red;
+          color: white;
+          padding: 6px 12px;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          margin-top: 10px;
+        `;
+        closeConfirmationBtn.addEventListener("click", function() {
+          // Hide the chat container and refresh the page.
+          document.getElementById("chatContainer").style.display = "none";
+          location.reload();
+        });
+        confirmationMessage.appendChild(closeConfirmationBtn);
         chatBody.appendChild(confirmationMessage);
         chatBody.scrollTop = chatBody.scrollHeight;
         otpContainer.remove();
@@ -855,7 +1081,6 @@ function handleTimeSlotSelection(date, slot) {
       otpContainer.appendChild(verifyButton);
       chatBody.appendChild(otpContainer);
       chatBody.scrollTop = chatBody.scrollHeight;
-
       otpInput.addEventListener("keydown", (event) => {
         if (event.key === "Enter") verifyButton.click();
       });
@@ -891,4 +1116,5 @@ document.getElementById("botButton").addEventListener("click", function (e) {
 // ================= Close Chat ==================
 document.getElementById("closeButton").addEventListener("click", function () {
   document.getElementById("chatContainer").style.display = "none";
+  location.reload();
 });
