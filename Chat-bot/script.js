@@ -56,6 +56,7 @@ async function predictIntent(userInput) {
   if (!tfModel) {
     return null;
   }
+  // Dummy preprocessing: use text length as a feature.
   const inputLength = userInput.length;
   const inputTensor = tf.tensor2d([[inputLength]]);
   const prediction = tfModel.predict(inputTensor);
@@ -68,13 +69,11 @@ async function predictIntent(userInput) {
 
 //================== Memory object to store user context.================
 let userContext = {
-  lastCondition: null,
-  additionalSymptoms: []
+  lastCondition: null
 };
 
 //=========== Global conversation state for Health Concerns interaction.===========
 let healthConversationState = {
-  step: 0,
   step: 0,
   condition: null,
   choices: [],
@@ -83,16 +82,9 @@ let healthConversationState = {
   additionalSymptoms: null
 };
 
-// ============ Fuzzy match function with ignored words =============
-const ignoredWords = ["i", "have", "having", "i am", "was", "is", "there", "that"];
-
-function cleanInput(input) {
-  let words = input.toLowerCase().split(" ");
-  return words.filter(word => !ignoredWords.includes(word)).join(" ");
-}
-
+// ============ Fuzzy match function. =============
 function fuzzyMatch(input, target) {
-  input = cleanInput(input);
+  input = input.toLowerCase();
   target = target.toLowerCase();
   const inputWords = input.split(" ");
   const targetWords = target.split(", ");
@@ -127,23 +119,20 @@ function fuzzyMatchCount(input, target) {
 //============= Helper: Get all matching conditions based on symptoms.===============
 function getMatchingConditions(userInput) {
   let matches = [];
-  let cleanedInput = cleanInput(userInput);
-  
   for (let condition in healthConditions) {
-    const score = fuzzyMatch(cleanedInput, healthConditions[condition].symptoms);
+    const score = fuzzyMatch(userInput, healthConditions[condition].symptoms);
     if (score > 40) {
       matches.push({ condition: condition, score: score });
     }
   }
-
   for (let condition in healthConditions) {
-    if (cleanedInput.includes(condition)) {
+    if (userInput.toLowerCase().includes(condition)) {
       if (!matches.find(m => m.condition === condition)) {
         matches.push({ condition: condition, score: 100 });
       }
     }
   }
-
+  // Sort matches by descending score.
   matches.sort((a, b) => b.score - a.score);
   return matches.map(m => m.condition);
 }
@@ -342,10 +331,6 @@ function displayBookTeleconsultation(message) {
 
 // ================= Enhanced Healthcare Chatbot Interaction ==================
 async function healthcareChatbot(userInput) {
-  let lowerInput = cleanInput(userInput);
-
-  // Handle remedy, diet, lifestyle, or appointment requests
-  if (["remedy", "diet", "lifestyle", "more info", "appointment"].some(keyword => lowerInput.includes(keyword))) {
   // First, convert to lowercase and remove common words that are not disease names.
   const lowerInput = userInput.toLowerCase();
   const ignoredWords = ["i", "have", "am", "was", "were", "having"];
@@ -385,14 +370,15 @@ async function healthcareChatbot(userInput) {
   ) {
     let condition = userContext.lastCondition;
     if (!condition) {
-      return speak("I'm sorry, I couldn't determine your condition. Could you please describe your symptoms again?");
+      return "I'm sorry, I couldn't determine your condition. Could you please describe your symptoms again?";
     }
+    healthConversationState.condition = condition;
     if (lowerInput.includes("remedy")) {
-      return speak(healthConditions[condition].remedy);
+      return healthConditions[condition].remedy;
     } else if (lowerInput.includes("diet")) {
-      return speak(healthConditions[condition].diet);
+      return healthConditions[condition].diet;
     } else if (lowerInput.includes("lifestyle")) {
-      return speak(healthConditions[condition].lifestyle);
+      return healthConditions[condition].lifestyle;
     } else if (lowerInput.includes("more info")) {
       displayConditionInfo(condition);
       return "";
@@ -402,21 +388,17 @@ async function healthcareChatbot(userInput) {
     }
   }
 
+  // "Choose" step: when multiple conditions match.
   if (healthConversationState.step === "choose") {
-    let choice = healthConversationState.choices.find(c => c.toLowerCase() === lowerInput.trim());
     const choice = healthConversationState.choices.find(
       (c) => c.toLowerCase() === cleanedInput.trim()
     );
     if (choice) {
       userContext.lastCondition = choice;
       healthConversationState.condition = choice;
-      healthConversationState.step = 1;
-      return speak(`You selected ${choice}. Could you please provide more details about your symptoms (e.g., intensity or any additional issues)?`);
       healthConversationState.step = "additionalSymptoms";
       return `okay , Additional you have ${choice}.\nAlong with this condition, are you having any other symptoms?`;
     } else {
-      let conditionList = healthConversationState.choices.map((cond, i) => `${i + 1}. ${cond}`).join("\n");
-      return speak(`I found several possible conditions based on your symptoms:\n${conditionList}\nPlease type the name of the condition you think best describes your problem.`);
       let conditionList = healthConversationState.choices
         .map((cond, i) => `${i + 1}. ${cond}`)
         .join("\n");
@@ -424,9 +406,8 @@ async function healthcareChatbot(userInput) {
     }
   }
 
+  // Step 0: Initial query processing.
   if (healthConversationState.step === 0) {
-    let matches = getMatchingConditions(lowerInput);
-
     let nlpResult = await predictIntent(userInput);
     let condition = null;
     if (nlpResult && nlpResult.confidence > 0.7 && nlpResult.intent !== "unknown") {
@@ -434,14 +415,8 @@ async function healthcareChatbot(userInput) {
     }
     const matches = getMatchingConditions(cleanedInput);
     if (matches.length === 0) {
-      return speak("I'm here to help, but I couldn't understand your symptoms. Could you please rephrase or provide more details?");
+      return "I'm here to help, but I didn't quite understand your symptoms. Could you please rephrase or provide more details?";
     } else if (matches.length === 1) {
-      userContext.lastCondition = matches[0];
-      healthConversationState.condition = matches[0];
-      healthConversationState.step = 1;
-      return speak(`I feel sorry that you're experiencing ${matches[0]}.
-Along with this condition, have you experienced any other symptoms?
-Also, how long have you been experiencing these symptoms?`);
       condition = condition || matches[0];
       userContext.lastCondition = condition;
       healthConversationState.condition = condition;
@@ -459,10 +434,6 @@ Also, how long have you been experiencing these symptoms?`);
       );
       return "";
     } else {
-      healthConversationState.step = "choose";
-      healthConversationState.choices = matches;
-      let conditionList = matches.map((cond, i) => `${i + 1}. ${cond}`).join("\n");
-      return speak(`I found multiple possible conditions based on your symptoms:\n${conditionList}\nPlease type the name of the condition you think best describes your problem.`);
       const topMatch = matches[0];
       const count = fuzzyMatchCount(cleanedInput, healthConditions[topMatch].symptoms);
       if (count >= 3) {
@@ -494,17 +465,6 @@ Also, how long have you been experiencing these symptoms?`);
     if (validMatches.length === 0) {
       return "Please enter valid symptoms or disease";
     }
-  }
-}
-
-// ================== Text-to-Speech Integration ==================
-
-// Returns a promise that resolves when voices are available.
-function getVoicesAsync() {
-  return new Promise((resolve, reject) => {
-    let voices = window.speechSynthesis.getVoices();
-    if (voices.length !== 0) {
-      resolve(voices);
     healthConversationState.additionalSymptoms = userInput;
     healthConversationState.step = "advice";
     displayBookTeleconsultation("Better I could suggest you to book a teleconsultation.");
@@ -551,26 +511,6 @@ function getVoicesAsync() {
       handleOptionSelection("Book Teleconsultation");
       return "";
     } else {
-      window.speechSynthesis.onvoiceschanged = () => {
-        voices = window.speechSynthesis.getVoices();
-        resolve(voices);
-      };
-    }
-  });
-}
-
-async function speak(text) {
-  const synth = window.speechSynthesis;
-  const utterance = new SpeechSynthesisUtterance(text);
-  
-  // Wait for voices to load
-  const voices = await getVoicesAsync();
-  // Try to pick a voice with "female" in its name; fallback to first available voice.
-  const femaleVoice = voices.find(voice => voice.name.toLowerCase().includes('female')) || voices[0];
-  utterance.voice = femaleVoice;
-  
-  synth.speak(utterance);
-  return text;
       displayAdviceOptions("Would you like more info or book a teleconsultation?");
       return "";
     }
@@ -655,7 +595,7 @@ function botReply(chatBody, message) {
     margin-left: 5px;
   `;
   speakerIcon.addEventListener("click", function () {
-    speak(message);
+    speakText(message);
   });
   botMessage.appendChild(speakerIcon);
   chatBody.appendChild(botMessage);
@@ -757,7 +697,9 @@ function handleOptionSelection(option) {
     container.appendChild(message);
     const dateInput = document.createElement("input");
     dateInput.type = "date";
-    dateInput.min = new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split("T")[0];
+    dateInput.min = new Date(new Date().setDate(new Date().getDate() + 1))
+      .toISOString()
+      .split("T")[0];
     dateInput.style.cssText = `
         margin: 5px 0;
         padding: 5px;
@@ -926,7 +868,7 @@ function handleTimeSlotSelection(date, slot) {
   botMessage.style.cssText = `
     font-weight: bold;
     margin-bottom: 15px;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Arial, sans-serif;
     font-size: 16px;
   `;
   detailsContainer.appendChild(botMessage);
@@ -1077,7 +1019,7 @@ function handleTimeSlotSelection(date, slot) {
         font-size: 14px;
       `;
       otpInput.addEventListener("input", (e) => {
-        otpInput.value = otpInput.value.replace(/\\D/g, "");
+        otpInput.value = otpInput.value.replace(/\D/g, "");
       });
       otpContainer.appendChild(otpInput);
       const verifyButton = document.createElement("button");
