@@ -56,7 +56,6 @@ async function predictIntent(userInput) {
   if (!tfModel) {
     return null;
   }
-  // Dummy preprocessing: use text length as a feature.
   const inputLength = userInput.length;
   const inputTensor = tf.tensor2d([[inputLength]]);
   const prediction = tfModel.predict(inputTensor);
@@ -69,21 +68,29 @@ async function predictIntent(userInput) {
 
 //================== Memory object to store user context.================
 let userContext = {
-  lastCondition: null
+  lastCondition: null,
+  additionalSymptoms: []
 };
 
 //=========== Global conversation state for Health Concerns interaction.===========
 let healthConversationState = {
-  step: 0,        
+  step: 0,
   condition: null,
   choices: [],
   duration: null,
   history: null
 };
 
-// ============ Fuzzy match function. =============
+// ============ Fuzzy match function with ignored words =============
+const ignoredWords = ["i", "have", "having", "i am", "was", "is", "there", "that"];
+
+function cleanInput(input) {
+  let words = input.toLowerCase().split(" ");
+  return words.filter(word => !ignoredWords.includes(word)).join(" ");
+}
+
 function fuzzyMatch(input, target) {
-  input = input.toLowerCase();
+  input = cleanInput(input);
   target = target.toLowerCase();
   const inputWords = input.split(" ");
   const targetWords = target.split(", ");
@@ -103,41 +110,43 @@ function fuzzyMatch(input, target) {
 //============= Helper: Get all matching conditions based on symptoms.===============
 function getMatchingConditions(userInput) {
   let matches = [];
+  let cleanedInput = cleanInput(userInput);
+  
   for (let condition in healthConditions) {
-    const score = fuzzyMatch(userInput, healthConditions[condition].symptoms);
+    const score = fuzzyMatch(cleanedInput, healthConditions[condition].symptoms);
     if (score > 40) {
       matches.push({ condition: condition, score: score });
     }
   }
+
   for (let condition in healthConditions) {
-    if (userInput.toLowerCase().includes(condition)) {
+    if (cleanedInput.includes(condition)) {
       if (!matches.find(m => m.condition === condition)) {
         matches.push({ condition: condition, score: 100 });
       }
     }
   }
-  // Sort matches by descending score.
+
   matches.sort((a, b) => b.score - a.score);
   return matches.map(m => m.condition);
 }
 
 // ================= Enhanced Healthcare Chatbot Interaction ==================
 async function healthcareChatbot(userInput) {
-  const lowerInput = userInput.toLowerCase();
-  if (lowerInput.includes("remedy") || lowerInput.includes("diet") ||
-      lowerInput.includes("lifestyle") || lowerInput.includes("more info") ||
-      lowerInput.includes("appointment")) {
+  let lowerInput = cleanInput(userInput);
+
+  // Handle remedy, diet, lifestyle, or appointment requests
+  if (["remedy", "diet", "lifestyle", "more info", "appointment"].some(keyword => lowerInput.includes(keyword))) {
     let condition = userContext.lastCondition;
     if (!condition) {
-      return "I'm sorry, I couldn't determine your condition. Could you please describe your symptoms again?";
+      return speak("I'm sorry, I couldn't determine your condition. Could you please describe your symptoms again?");
     }
-    healthConversationState.condition = condition;
     if (lowerInput.includes("remedy")) {
-      return healthConditions[condition].remedy;
+      return speak(healthConditions[condition].remedy);
     } else if (lowerInput.includes("diet")) {
-      return healthConditions[condition].diet;
+      return speak(healthConditions[condition].diet);
     } else if (lowerInput.includes("lifestyle")) {
-      return healthConditions[condition].lifestyle;
+      return speak(healthConditions[condition].lifestyle);
     } else if (lowerInput.includes("more info")) {
       displayConditionInfo(condition);
       return "";
@@ -147,108 +156,69 @@ async function healthcareChatbot(userInput) {
     }
   }
 
-  // "Choose" step: when multiple conditions match.
   if (healthConversationState.step === "choose") {
-    const choice = healthConversationState.choices.find(
-      c => c.toLowerCase() === lowerInput.trim()
-    );
+    let choice = healthConversationState.choices.find(c => c.toLowerCase() === lowerInput.trim());
     if (choice) {
       userContext.lastCondition = choice;
       healthConversationState.condition = choice;
-      // Move to additional details stage.
       healthConversationState.step = 1;
-      return ` you selected ${choice}. Could you please provide more details about your symptoms (for example, intensity or any additional issues)?`;
-
+      return speak(`You selected ${choice}. Could you please provide more details about your symptoms (e.g., intensity or any additional issues)?`);
     } else {
-      // List conditions one by one.
-      let conditionList = healthConversationState.choices
-        .map((cond, i) => `${i + 1}. ${cond}`)
-        .join("\n");
-      return `I found several possible conditions based on your symptoms:\n${conditionList}\nPlease type the name of the condition you think best describes your problem.`;
+      let conditionList = healthConversationState.choices.map((cond, i) => `${i + 1}. ${cond}`).join("\n");
+      return speak(`I found several possible conditions based on your symptoms:\n${conditionList}\nPlease type the name of the condition you think best describes your problem.`);
     }
   }
 
-  // Step 0: Initial query processing.
   if (healthConversationState.step === 0) {
-    // Try NLP prediction.
-    let nlpResult = await predictIntent(userInput);
-    let condition = null;
-    if (nlpResult && nlpResult.confidence > 0.7 && nlpResult.intent !== "unknown") {
-      condition = nlpResult.intent;
-    }
-    // Also try fuzzy matching.
-    const matches = getMatchingConditions(userInput);
+    let matches = getMatchingConditions(lowerInput);
+
     if (matches.length === 0) {
-      return "I'm here to help, but I didn't quite understand your symptoms. Could you please rephrase or provide more details?";
+      return speak("I'm here to help, but I couldn't understand your symptoms. Could you please rephrase or provide more details?");
     } else if (matches.length === 1) {
-      condition = condition || matches[0];
-      userContext.lastCondition = condition;
-      healthConversationState.condition = condition;
-      // Move to additional details stage.
+      userContext.lastCondition = matches[0];
+      healthConversationState.condition = matches[0];
       healthConversationState.step = 1;
-      return `I feel sorry for that you are experiencing ${condition}. Along with these, Have you experiencing any other symptoms ? `;
+      return speak(`I feel sorry that you're experiencing ${matches[0]}.
+Along with this condition, have you experienced any other symptoms?
+Also, how long have you been experiencing these symptoms?`);
     } else {
       healthConversationState.step = "choose";
       healthConversationState.choices = matches;
       let conditionList = matches.map((cond, i) => `${i + 1}. ${cond}`).join("\n");
-      return `I found several possible conditions based on your symptoms:\n${conditionList}\nPlease type the name of the condition you think best describes your problem.`;
+      return speak(`I found multiple possible conditions based on your symptoms:\n${conditionList}\nPlease type the name of the condition you think best describes your problem.`);
     }
   }
-  // Step 1: Follow-up details received.
-  else if (healthConversationState.step === 1) {
-    // Ask the user how long they have been experiencing the symptoms.
-    healthConversationState.step = "duration";
-    return `Could you please tell me how long you have been experiencing these symptoms? (For example, "2 days", "1 week", etc.)`;
-  }
-  // Step "duration": Process the duration provided.
-  else if (healthConversationState.step === "duration") {
-    // Store the duration (we do minimal validation here).
-    healthConversationState.duration = userInput;
-    // Now ask if they have experienced similar symptoms before.
-    healthConversationState.step = "history";
-    return `Got it. Have you experienced these symptoms before? (Please answer with "yes" or "no")`;
-  }
-  // Step "history": Process the user's answer about symptom history.
-  else if (healthConversationState.step === "history") {
-    if (lowerInput.includes("yes")) {
-      healthConversationState.history = "recurring";
-      healthConversationState.step = "advice";
-      return `It might be important to consult a professional if this continues. Would you like advice on remedy, diet, or lifestyle adjustments? You may also type "more info" for detailed information about your condition or "appointment" to book a teleconsultation.`;
-    } else if (lowerInput.includes("no")) {
-      healthConversationState.history = "new";
-      healthConversationState.step = "advice";
-      return `Thank you for letting me know this is a new occurrence. New symptoms can sometimes be concerning, so please keep an eye on how you feel. 
-      \nWould you like advice on\n
-      \n- Remedy
-      \n- Diet
-      \n- Lifestyle adjustments  
-      \nYou may also choose:
-      \n- More info (for detailed information about your condition)
-      \n- Book teleconsultation (to schedule an appointment)`;
-  }
-   else {
-      return `Please answer with "yes" or "no" if you have experienced these symptoms before.`;
-    }
-  }
-  // Step "advice": Advice/interaction stage.
-  else if (healthConversationState.step === "advice") {
-    let condition = healthConversationState.condition;
-    if (lowerInput.includes("remedy")) {
-      return healthConditions[condition].remedy;
-    } else if (lowerInput.includes("diet")) {
-      return healthConditions[condition].diet;
-    } else if (lowerInput.includes("lifestyle")) {
-      return healthConditions[condition].lifestyle;
-    } else if (lowerInput.includes("more info")) {
-      displayConditionInfo(condition);
-      return "";
-    } else if (lowerInput.includes("appointment")) {
-      handleOptionSelection("Book Teleconsultation");
-      return "";
+}
+
+// ================== Text-to-Speech Integration ==================
+
+// Returns a promise that resolves when voices are available.
+function getVoicesAsync() {
+  return new Promise((resolve, reject) => {
+    let voices = window.speechSynthesis.getVoices();
+    if (voices.length !== 0) {
+      resolve(voices);
     } else {
-      return "Could you please specify if you need advice on remedy, diet, or lifestyle? You may also type 'more info' for additional details about your condition or 'appointment' to book a consultation.";
+      window.speechSynthesis.onvoiceschanged = () => {
+        voices = window.speechSynthesis.getVoices();
+        resolve(voices);
+      };
     }
-  }
+  });
+}
+
+async function speak(text) {
+  const synth = window.speechSynthesis;
+  const utterance = new SpeechSynthesisUtterance(text);
+  
+  // Wait for voices to load
+  const voices = await getVoicesAsync();
+  // Try to pick a voice with "female" in its name; fallback to first available voice.
+  const femaleVoice = voices.find(voice => voice.name.toLowerCase().includes('female')) || voices[0];
+  utterance.voice = femaleVoice;
+  
+  synth.speak(utterance);
+  return text;
 }
 
 // ================= Display Detailed Condition Information ==================
@@ -329,7 +299,7 @@ function botReply(chatBody, message) {
     margin-left: 5px;
   `;
   speakerIcon.addEventListener("click", function () {
-    speakText(message);
+    speak(message);
   });
   botMessage.appendChild(speakerIcon);
   chatBody.appendChild(botMessage);
@@ -433,9 +403,7 @@ function handleOptionSelection(option) {
 
     const dateInput = document.createElement("input");
     dateInput.type = "date";
-    dateInput.min = new Date(new Date().setDate(new Date().getDate() + 1))
-      .toISOString()
-      .split("T")[0];
+    dateInput.min = new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split("T")[0];
     dateInput.style.cssText = `
         margin: 5px 0;
         padding: 5px;
@@ -620,7 +588,7 @@ function handleTimeSlotSelection(date, slot) {
   botMessage.style.cssText = `
     font-weight: bold;
     margin-bottom: 15px;
-    font-family: Arial, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 16px;
   `;
   detailsContainer.appendChild(botMessage);
@@ -785,7 +753,7 @@ function handleTimeSlotSelection(date, slot) {
         font-size: 14px;
       `;
       otpInput.addEventListener("input", (e) => {
-        otpInput.value = otpInput.value.replace(/\D/g, "");
+        otpInput.value = otpInput.value.replace(/\\D/g, "");
       });
       otpContainer.appendChild(otpInput);
 
