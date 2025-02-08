@@ -1,3 +1,28 @@
+function speakText(text) {
+  // Stop any ongoing speech before starting a new one
+  speechSynthesis.cancel();
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  const voices = speechSynthesis.getVoices();
+
+  // Try to find a female voice
+  const femaleVoice = voices.find(voice => voice.name.includes("Female") || voice.gender === "female");
+
+  // If a female voice is found, set it; otherwise, use the default
+  if (femaleVoice) {
+    utterance.voice = femaleVoice;
+  }
+
+  // Speak only once
+  speechSynthesis.speak(utterance);
+}
+
+// Ensure voices are loaded properly
+speechSynthesis.onvoiceschanged = () => {
+  console.log("Voices updated:", speechSynthesis.getVoices());
+};
+
+
 // ================= Chat Animation on Page Load ==================
 document.addEventListener("DOMContentLoaded", function () {
   const chatMessageContainer = document.getElementById("chatMessageContainer");
@@ -79,7 +104,7 @@ let healthConversationState = {
   choices: [],
   duration: null,
   history: null,
-  additionalSymptoms: null
+  additionalSymptoms: ""  // initially empty; will accumulate symptom strings
 };
 
 // ============ Fuzzy match function. =============
@@ -182,7 +207,6 @@ function displayYesNoButtons(message, onYes, onNo) {
     cursor: pointer;
   `;
   yesButton.addEventListener("click", function () {
-    // Append user message "Yes"
     const userMsg = document.createElement("div");
     userMsg.textContent = "Yes";
     userMsg.style.cssText = "background: #229ea6; color: white; padding: 8px; border-radius: 5px; margin-bottom: 5px; align-self: flex-end; font-family: Arial, sans-serif;";
@@ -202,7 +226,6 @@ function displayYesNoButtons(message, onYes, onNo) {
     cursor: pointer;
   `;
   noButton.addEventListener("click", function () {
-    // Append user message "No"
     const userMsg = document.createElement("div");
     userMsg.textContent = "No";
     userMsg.style.cssText = "background: #229ea6; color: white; padding: 8px; border-radius: 5px; margin-bottom: 5px; align-self: flex-end; font-family: Arial, sans-serif;";
@@ -211,6 +234,19 @@ function displayYesNoButtons(message, onYes, onNo) {
     onNo();
   });
 
+  // Speaker Icon
+  const speakerIcon = document.createElement("span");
+  speakerIcon.textContent = " 🔊";
+  speakerIcon.style.cssText = `
+    cursor: pointer;
+    font-size: 16px;
+    margin: 0px;
+  `;
+  speakerIcon.addEventListener("click", function () {
+    speakText(message);
+  });
+
+  buttonContainer.appendChild(speakerIcon);
   buttonContainer.appendChild(yesButton);
   buttonContainer.appendChild(noButton);
   container.appendChild(buttonContainer);
@@ -279,11 +315,23 @@ function displayAdviceOptions(message) {
     cursor: pointer;
   `;
   closeButton.addEventListener("click", function() {
-    // Close the chat container and refresh the page
     document.getElementById("chatContainer").style.display = "none";
     location.reload();
   });
 
+  // Speaker Icon
+  const speakerIcon = document.createElement("span");
+  speakerIcon.textContent = " 🔊";
+  speakerIcon.style.cssText = `
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 5px;
+  `;
+  speakerIcon.addEventListener("click", function () {
+    speakText(message);
+  });
+
+  buttonContainer.appendChild(speakerIcon);
   buttonContainer.appendChild(moreInfoButton);
   buttonContainer.appendChild(bookButton);
   buttonContainer.appendChild(closeButton);
@@ -331,13 +379,11 @@ function displayBookTeleconsultation(message) {
 
 // ================= Enhanced Healthcare Chatbot Interaction ==================
 async function healthcareChatbot(userInput) {
-  // First, convert to lowercase and remove common words that are not disease names.
   const lowerInput = userInput.toLowerCase();
   const ignoredWords = ["i", "have", "am", "was", "were", "having"];
   const tokens = lowerInput.split(" ").filter(word => !ignoredWords.includes(word));
   const cleanedInput = tokens.join(" ").trim();
 
-  // If the cleaned input exactly matches a disease name from the JSON, use it.
   let diseaseNames = Object.keys(healthConditions);
   let exactMatch = diseaseNames.find(
     (disease) => disease.toLowerCase() === cleanedInput
@@ -347,7 +393,7 @@ async function healthcareChatbot(userInput) {
     healthConversationState.condition = exactMatch;
     healthConversationState.step = "confirmAdditionalSymptoms";
     displayYesNoButtons(
-      `I feel sorry that you are experiencing ${exactMatch}. Along with this condition, are you having any other symptoms?`,
+      `You have selected ${exactMatch}. Along with this condition, are you having any other symptoms?`,
       function () {
         healthConversationState.step = "additionalSymptoms";
         botReply(document.getElementById("chatBody"), "Please describe your additional symptoms.");
@@ -360,7 +406,6 @@ async function healthcareChatbot(userInput) {
     return "";
   }
 
-  // If the user asks for remedy/diet/lifestyle/more info/appointment.
   if (
     lowerInput.includes("remedy") ||
     lowerInput.includes("diet") ||
@@ -388,7 +433,6 @@ async function healthcareChatbot(userInput) {
     }
   }
 
-  // "Choose" step: when multiple conditions match.
   if (healthConversationState.step === "choose") {
     const choice = healthConversationState.choices.find(
       (c) => c.toLowerCase() === cleanedInput.trim()
@@ -397,7 +441,7 @@ async function healthcareChatbot(userInput) {
       userContext.lastCondition = choice;
       healthConversationState.condition = choice;
       healthConversationState.step = "additionalSymptoms";
-      return `okay , Additional you have ${choice}.\nAlong with this condition, are you having any other symptoms?`;
+      return `Great, you selected ${choice}.\nAlong with this condition, are you having any other symptoms?`;
     } else {
       let conditionList = healthConversationState.choices
         .map((cond, i) => `${i + 1}. ${cond}`)
@@ -406,7 +450,6 @@ async function healthcareChatbot(userInput) {
     }
   }
 
-  // Step 0: Initial query processing.
   if (healthConversationState.step === 0) {
     let nlpResult = await predictIntent(userInput);
     let condition = null;
@@ -422,7 +465,7 @@ async function healthcareChatbot(userInput) {
       healthConversationState.condition = condition;
       healthConversationState.step = "confirmAdditionalSymptoms";
       displayYesNoButtons(
-        `I feel sorry that you experiencing ${condition}.\nAlong with this condition, are you having any other symptoms?`,
+        `I see you might be experiencing ${condition}.\nAlong with this condition, are you having any other symptoms?`,
         function () {
           healthConversationState.step = "additionalSymptoms";
           botReply(document.getElementById("chatBody"), "Please describe your additional symptoms.");
@@ -442,7 +485,7 @@ async function healthcareChatbot(userInput) {
         healthConversationState.condition = condition;
         healthConversationState.step = "confirmAdditionalSymptoms";
         displayYesNoButtons(
-          `Based on your input, you might be experiencing ${condition}.\nAlong with this condition, are you having any other symptoms?`,
+          `Based on your input, I believe you might be experiencing ${condition}.\nAlong with this condition, are you having any other symptoms?`,
           function () {
             healthConversationState.step = "additionalSymptoms";
             botReply(document.getElementById("chatBody"), "Please describe your additional symptoms.");
@@ -455,7 +498,10 @@ async function healthcareChatbot(userInput) {
         return "";
       } else {
         healthConversationState.step = "multipleSymptoms";
-        return "Your symptoms match several diseases, can you describe more symptoms?";
+        // Save the initial input in additionalSymptoms.
+        healthConversationState.additionalSymptoms = cleanedInput;
+        displayBookTeleconsultation("Your symptoms match several diseases, can you describe more symptoms?");
+        return "";
       }
     }
   }
@@ -465,9 +511,19 @@ async function healthcareChatbot(userInput) {
     if (validMatches.length === 0) {
       return "Please enter valid symptoms or disease";
     }
-    healthConversationState.additionalSymptoms = userInput;
+    // Accumulate new symptoms to previous ones.
+    if (healthConversationState.additionalSymptoms) {
+      healthConversationState.additionalSymptoms += ", " + userInput;
+    } else {
+      healthConversationState.additionalSymptoms = userInput;
+    }
+    // Re-run matching on the combined symptoms.
+    const newMatches = getMatchingConditions(healthConversationState.additionalSymptoms);
+    if(newMatches.length === 1) {
+      healthConversationState.condition = newMatches[0];
+    }
     healthConversationState.step = "advice";
-    displayBookTeleconsultation("Better I could suggest you to book a teleconsultation.");
+    displayBookTeleconsultation("Sorry for inconvenience. You may book a teleconsultation.");
     return "";
   }
   
@@ -476,7 +532,12 @@ async function healthcareChatbot(userInput) {
     if (validMatches.length === 0) {
       return "Please enter valid symptoms or disease";
     }
-    healthConversationState.additionalSymptoms = userInput;
+    // Accumulate the new input to previously stored symptoms.
+    if (healthConversationState.additionalSymptoms) {
+      healthConversationState.additionalSymptoms += ", " + userInput;
+    } else {
+      healthConversationState.additionalSymptoms = userInput;
+    }
     healthConversationState.step = "duration";
     return `Thank you for sharing.\nCould you please tell me how long you have been experiencing these symptoms? (For example, "2 days", "1 week", etc.)`;
   }
@@ -492,12 +553,12 @@ async function healthcareChatbot(userInput) {
       function () {
         healthConversationState.history = "recurring";
         healthConversationState.step = "advice";
-        displayAdviceOptions("These symptoms are recurring. It might be important to consult a professional if this continues. Would you like more info or book a teleconsultation?");
+        displayAdviceOptions("I see that these symptoms are recurring. It might be important to consult a professional if this continues. Would you like more info or book a teleconsultation?");
       },
       function () {
         healthConversationState.history = "new";
         healthConversationState.step = "advice";
-        displayAdviceOptions("This is a new occurrence. New symptoms can sometimes be concerning, so please keep an eye on how you feel. Would you like more info or book a teleconsultation?");
+        displayAdviceOptions("Thank you for letting me know this is a new occurrence. New symptoms can sometimes be concerning, so please keep an eye on how you feel. Would you like more info or book a teleconsultation?");
       }
     );
     return "";
@@ -520,7 +581,6 @@ async function healthcareChatbot(userInput) {
 // ================= Display Detailed Condition Information ==================
 function displayConditionInfo(condition) {
   const chatBody = document.getElementById("chatBody");
-
   let conditionContainer = document.createElement("div");
   conditionContainer.style.cssText = `
         background: #f9f9f9;
@@ -557,15 +617,32 @@ function displayConditionInfo(condition) {
     button.onmouseover = () => (button.style.background = "#1b828a");
     button.onmouseleave = () => (button.style.background = "#229ea6");
     button.onclick = function () {
+      const textToSpeak = `${type.charAt(0).toUpperCase() + type.slice(1)}: ${healthConditions[condition][type]}`;
       responseContainer.innerHTML = `<p><strong>${type.charAt(0).toUpperCase() + type.slice(1)}:</strong> ${healthConditions[condition][type]}</p>`;
+      speakText(textToSpeak); // Speak the button text content
     };
     buttonContainer.appendChild(button);
   });
 
+  // Speaker Icon
+  const speakerIcon = document.createElement("span");
+  speakerIcon.textContent = " 🔊";
+  speakerIcon.style.cssText = `
+  cursor: pointer;
+  font-size: 16px;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  `;
+  speakerIcon.addEventListener("click", function () {
+    // Speak the condition message
+    speakText(conditionMessage.textContent);
+  });
+
+  buttonContainer.appendChild(speakerIcon);
   conditionContainer.appendChild(conditionMessage);
   conditionContainer.appendChild(buttonContainer);
   conditionContainer.appendChild(responseContainer);
-
   chatBody.appendChild(conditionContainer);
   chatBody.scrollTop = chatBody.scrollHeight;
 }
@@ -573,6 +650,8 @@ function displayConditionInfo(condition) {
 // ================= Bot Reply Function with Speaker Icon ==================
 function botReply(chatBody, message) {
   if (!message) return;
+
+  // Create bot message container
   const botMessage = document.createElement("div");
   botMessage.textContent = message;
   botMessage.style.cssText = `
@@ -585,27 +664,36 @@ function botReply(chatBody, message) {
       align-self: flex-start;
       font-family: Arial, sans-serif;
       position: relative;
+      display: flex;
+      align-items: center;
   `;
 
+  // Create speaker icon
   const speakerIcon = document.createElement("span");
   speakerIcon.textContent = " 🔊";
   speakerIcon.style.cssText = `
-    cursor: pointer;
-    font-size: 16px;
-    margin-left: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  position: absolute;
+  top: 5px;
+  right: 5px;
   `;
   speakerIcon.addEventListener("click", function () {
     speakText(message);
   });
+
+  // Append speaker icon to bot message
   botMessage.appendChild(speakerIcon);
+
+  // Append bot message to chat body
   chatBody.appendChild(botMessage);
   chatBody.scrollTop = chatBody.scrollHeight;
 }
 
+
 // ================= Initialize Chat Options ==================
 function initializeChat() {
   const chatBody = document.getElementById("chatBody");
-
   const optionsContainer = document.createElement("div");
   optionsContainer.style.cssText = `
       background: #ffffff;
@@ -616,7 +704,6 @@ function initializeChat() {
       font-family: Arial, sans-serif;
       margin: 10px 0;
   `;
-
   const heading = document.createElement("p");
   heading.textContent = "How May I help you ?";
   heading.style.cssText = `
@@ -624,9 +711,7 @@ function initializeChat() {
       margin-bottom: 10px;
   `;
   optionsContainer.appendChild(heading);
-
   const options = ["Book Teleconsultation", "Health Concerns"];
-
   options.forEach((option) => {
     const button = document.createElement("button");
     button.textContent = option;
@@ -646,14 +731,12 @@ function initializeChat() {
     button.addEventListener("click", () => handleOptionSelection(option));
     optionsContainer.appendChild(button);
   });
-
   chatBody.appendChild(optionsContainer);
 }
 
 // ================= Handle Option Selection ==================
 function handleOptionSelection(option) {
   const chatBody = document.getElementById("chatBody");
-
   const userMessage = document.createElement("div");
   userMessage.textContent = option;
   userMessage.style.cssText = `
@@ -666,16 +749,14 @@ function handleOptionSelection(option) {
       font-family: Arial, sans-serif;
   `;
   chatBody.appendChild(userMessage);
-
   if (option === "Health Concerns") {
     healthConversationState.step = 0;
     healthConversationState.condition = null;
     healthConversationState.choices = [];
     healthConversationState.duration = null;
     healthConversationState.history = null;
-    healthConversationState.additionalSymptoms = null;
+    healthConversationState.additionalSymptoms = "";
   }
-
   if (option === "Book Teleconsultation") {
     const container = document.createElement("div");
     container.style.cssText = `
@@ -1056,7 +1137,7 @@ function handleTimeSlotSelection(date, slot) {
           margin-top: 10px;
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         `;
-        // Append a Close button to the Booking Confirmation
+        // Append a Close button to the Booking Confirmation.
         const closeConfirmationBtn = document.createElement("button");
         closeConfirmationBtn.textContent = "Close";
         closeConfirmationBtn.style.cssText = `
@@ -1069,7 +1150,6 @@ function handleTimeSlotSelection(date, slot) {
           margin-top: 10px;
         `;
         closeConfirmationBtn.addEventListener("click", function() {
-          // Hide the chat container and refresh the page.
           document.getElementById("chatContainer").style.display = "none";
           location.reload();
         });
@@ -1088,7 +1168,6 @@ function handleTimeSlotSelection(date, slot) {
       botReply(chatBody, "❗ Please fill in all the details.");
     }
   }
-
   submitButton.addEventListener("click", handleSubmit);
   detailsContainer.addEventListener("keydown", (event) => {
     if (event.key === "Enter") handleSubmit();
